@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>💖 Fernanda · Finanças</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#060810;--s1:#0c1020;--s2:#111829;--s3:#18213a;--s4:#1f2b47;
+  --bdr:rgba(255,255,255,.06);--bdr2:rgba(255,255,255,.12);
+  --gold:#ff6b9d;--gold2:rgba(255,107,157,.13);--gold3:rgba(255,107,157,.32);
+  --green:#1ed760;--green2:rgba(30,215,96,.11);--green3:rgba(30,215,96,.28);
+  --red:#ff3b5c;--red2:rgba(255,59,92,.11);--red3:rgba(255,59,92,.28);
+  --blue:#4f9fff;--blue2:rgba(79,159,255,.11);--blue3:rgba(79,159,255,.3);
+  --purple:#b48fff;--purple2:rgba(180,143,255,.11);--purple3:rgba(180,143,255,.3);
+  --cyan:#00d4aa;--cyan2:rgba(0,212,170,.1);--cyan3:rgba(0,212,170,.28);
+  --orange:#ff8c42;--orange2:rgba(255,140,66,.11);--orange3:rgba(255,140,66,.28);
+  --pink:#ff6b9d;--pink2:rgba(255,107,157,.11);--pink3:rgba(255,107,157,.3);
+  --tx:#dde4f0;--mu:#4a5d80;--mu2:#2e3d5e;
+  --fh:'Bricolage Grotesque',sans-serif;
+  --fb:'Instrument Sans',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--fb);overflow-x:hidden}
+
+/* ── LOCK ─────────────────────────────────────── */
+#lock{
+  position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:32px;
+  background:var(--bg);
+}
+#lock::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 100% 70% at 50% -5%,rgba(255,107,157,.08) 0%,transparent 60%),
+             radial-gradient(ellipse 60% 40% at 90% 100%,rgba(180,143,255,.06) 0%,transparent 50%);
+  pointer-events:none;
+}
+.lock-icon{font-size:60px;margin-bottom:28px;position:relative;z-index:1;
+  animation:float 4s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.lock-phrase{
+  font-family:var(--fh);font-size:19px;font-weight:800;color:var(--gold);
+  text-align:center;line-height:1.5;max-width:290px;margin-bottom:8px;
+  position:relative;z-index:1;letter-spacing:-.2px;
+}
+.lock-by{font-size:12px;color:var(--mu);text-align:center;margin-bottom:44px;
+  font-style:italic;position:relative;z-index:1;}
+.lock-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--mu);margin-bottom:10px;width:100%;max-width:260px;position:relative;z-index:1;}
+.lock-pin{
+  width:100%;max-width:260px;background:var(--s2);border:2px solid var(--bdr2);
+  border-radius:14px;padding:18px;font-size:28px;font-weight:800;font-family:var(--fh);
+  color:var(--tx);letter-spacing:12px;text-align:center;outline:none;
+  transition:border-color .2s,box-shadow .2s;margin-bottom:14px;
+  position:relative;z-index:1;
+}
+.lock-pin:focus{border-color:var(--gold);box-shadow:0 0 0 4px rgba(255,107,157,.12)}
+.lock-pin.wrong{animation:shake .4s;border-color:var(--red)}
+@keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}100%{transform:translateX(0)}}
+.lock-btn{
+  width:100%;max-width:260px;padding:16px;border:none;border-radius:12px;
+  background:linear-gradient(135deg,#ff6b9d,#e0457a);color:#fff;
+  font-family:var(--fh);font-size:15px;font-weight:800;cursor:pointer;
+  letter-spacing:.3px;transition:all .2s;position:relative;z-index:1;
+}
+.lock-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(255,107,157,.35)}
+.lock-err{font-size:12px;color:var(--red);text-align:center;margin-top:10px;min-height:18px;position:relative;z-index:1;}
+
+/* ── APP ──────────────────────────────────────── */
+#app{display:none;min-height:100vh;flex-direction:column}
+#app.show{display:flex}
+
+/* NAV */
+.nav{
+  position:sticky;top:0;z-index:100;background:rgba(6,8,16,.92);
+  backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);
+}
+.nav-inner{
+  display:flex;align-items:stretch;overflow-x:auto;scrollbar-width:none;
+  max-width:900px;margin:0 auto;padding:0 6px;
+}
+.nav-inner::-webkit-scrollbar{display:none}
+.nb{
+  font-family:var(--fh);font-weight:800;font-size:14px;color:var(--gold);
+  padding:13px 14px 13px 8px;border-right:1px solid var(--bdr);
+  display:flex;align-items:center;gap:5px;flex-shrink:0;margin-right:4px;
+  white-space:nowrap;
+}
+.nt{
+  flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:10px 14px;font-size:11px;font-weight:600;color:var(--mu);
+  cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;gap:2px;white-space:nowrap;
+}
+.nt .ni{font-size:17px;line-height:1}
+.nt.on{color:var(--gold);border-bottom-color:var(--gold)}
+.nt:hover:not(.on){color:var(--tx)}
+
+/* MONTH SELECTOR */
+.month-bar{
+  background:var(--s1);border-bottom:1px solid var(--bdr);
+  overflow-x:auto;scrollbar-width:none;display:flex;gap:6px;
+  padding:10px 16px;max-width:900px;margin:0 auto;width:100%;
+}
+.month-bar::-webkit-scrollbar{display:none}
+.mc{
+  flex-shrink:0;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;
+  cursor:pointer;border:1px solid var(--bdr);background:transparent;color:var(--mu);
+  transition:all .2s;font-family:var(--fb);
+}
+.mc.on{background:var(--gold);color:#000;border-color:var(--gold)}
+.mc.has{border-color:rgba(30,215,96,.3);color:var(--green)}
+.mc:hover:not(.on){border-color:var(--bdr2);color:var(--tx)}
+
+/* PAGES */
+.pg{display:none;padding:16px;max-width:900px;margin:0 auto;width:100%;
+  animation:pageIn .22s ease;}
+.pg.on{display:block}
+@keyframes pageIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+
+/* HEADER */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.ph-title{font-family:var(--fh);font-size:22px;font-weight:800;line-height:1.2}
+.ph-sub{font-size:12px;color:var(--mu);margin-top:3px}
+
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--bdr);border-radius:16px;padding:18px;margin-bottom:12px}
+.card-accent{border-radius:16px;padding:20px;margin-bottom:12px;position:relative;overflow:hidden;border:1px solid}
+.card-accent::after{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;
+  border-radius:50%;opacity:.06;background:currentColor;pointer-events:none}
+.ctitle{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--mu);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.ctitle::after{content:'';flex:1;height:1px;background:var(--bdr)}
+
+/* KPI GRIDS */
+.k2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.k3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.k4{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+@media(min-width:480px){.k4{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:480px){.k3{grid-template-columns:repeat(3,1fr)}}
+.kpi{background:var(--s1);border:1px solid var(--bdr);border-radius:12px;padding:14px}
+.kl{font-size:11px;color:var(--mu);margin-bottom:5px;font-weight:500}
+.kv{font-family:var(--fh);font-size:20px;font-weight:800;line-height:1.1}
+.ks{font-size:11px;color:var(--mu);margin-top:3px}
+.kpi.g{border-color:var(--green3);background:var(--green2)}.kpi.g .kv{color:var(--green)}
+.kpi.r{border-color:var(--red3);background:var(--red2)}.kpi.r .kv{color:var(--red)}
+.kpi.gd{border-color:var(--gold3);background:var(--gold2)}.kpi.gd .kv{color:var(--gold)}
+.kpi.b{border-color:var(--blue3);background:var(--blue2)}.kpi.b .kv{color:var(--blue)}
+.kpi.p{border-color:var(--purple3);background:var(--purple2)}.kpi.p .kv{color:var(--purple)}
+.kpi.c{border-color:var(--cyan3);background:var(--cyan2)}.kpi.c .kv{color:var(--cyan)}
+.kpi.o{border-color:var(--orange3);background:var(--orange2)}.kpi.o .kv{color:var(--orange)}
+.kpi.pk{border-color:var(--pink3);background:var(--pink2)}.kpi.pk .kv{color:var(--pink)}
+
+/* PROGRESS */
+.pb{margin:8px 0}
+.pb-top{display:flex;justify-content:space-between;font-size:11px;color:var(--mu);margin-bottom:5px}
+.pt{border-radius:5px;overflow:hidden}
+.pf{border-radius:5px;transition:width .7s cubic-bezier(.4,0,.2,1);height:100%}
+.pf.g{background:linear-gradient(90deg,var(--green),#7cf7a0)}
+.pf.gd{background:linear-gradient(90deg,var(--gold),var(--orange))}
+.pf.r{background:linear-gradient(90deg,var(--red),var(--orange))}
+.pf.b{background:linear-gradient(90deg,var(--blue),var(--purple))}
+.pf.p{background:linear-gradient(90deg,var(--purple),var(--pink))}
+.pf.c{background:linear-gradient(90deg,var(--cyan),var(--blue))}
+.pf.pk{background:linear-gradient(90deg,var(--pink),var(--purple))}
+
+/* INPUTS */
+.inp{background:var(--s2);border:1px solid var(--bdr);border-radius:10px;
+  padding:10px 13px;font-size:13px;color:var(--tx);outline:none;
+  font-family:var(--fb);transition:border-color .2s,box-shadow .2s;width:100%}
+.inp:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,200,66,.1)}
+.inp::placeholder{color:var(--mu)}
+.inp-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+.inp-row .inp{flex:1;min-width:90px}
+.inp-group{display:flex;flex-direction:column;gap:5px;flex:1;min-width:80px}
+.inp-group label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--mu)}
+
+/* BIG VALUE INPUT */
+.val-block{background:var(--s2);border-radius:14px;padding:16px;margin-bottom:10px}
+.val-block-label{font-size:11px;font-weight:600;color:var(--mu);letter-spacing:.5px;margin-bottom:8px}
+.val-big{display:flex;align-items:center;gap:6px}
+.val-prefix{font-family:var(--fh);font-size:20px;font-weight:700;color:var(--mu)}
+.val-input{background:transparent;border:none;outline:none;font-family:var(--fh);
+  font-size:28px;font-weight:800;color:var(--gold);flex:1;min-width:0;width:100%}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;
+  cursor:pointer;border:none;font-family:var(--fb);transition:all .2s;white-space:nowrap}
+.btn-gd{background:linear-gradient(135deg,#ff6b9d,#e0457a);color:#fff}
+.btn-gd:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,107,157,.3)}
+.btn-g{background:var(--green2);border:1px solid var(--green3);color:var(--green)}
+.btn-b{background:var(--blue2);border:1px solid var(--blue3);color:var(--blue)}
+.btn-ghost{background:var(--s2);border:1px solid var(--bdr);color:var(--tx)}
+.btn-ghost:hover{border-color:var(--bdr2)}
+.btn-r{background:var(--red2);border:1px solid var(--red3);color:var(--red)}
+.btn-sm{padding:7px 13px;font-size:12px;border-radius:8px}
+.btn-full{width:100%}
+.del-x{background:none;border:none;color:var(--mu2);cursor:pointer;font-size:14px;
+  padding:4px 7px;border-radius:6px;transition:all .15s;line-height:1}
+.del-x:hover{background:var(--red2);color:var(--red)}
+
+/* LIST ROWS */
+.list-row{
+  display:flex;align-items:center;gap:12px;padding:11px 0;
+  border-bottom:1px solid var(--bdr);
+}
+.list-row:last-child{border-bottom:none}
+.row-main{flex:1;min-width:0}
+.row-title{font-weight:600;font-size:13px;color:var(--tx)}
+.row-sub{font-size:11px;color:var(--mu);margin-top:2px}
+.row-val{font-family:var(--fh);font-size:15px;font-weight:800;white-space:nowrap;flex-shrink:0}
+.row-val.pos{color:var(--green)}
+.row-val.neg{color:var(--red)}
+.row-val.gd{color:var(--gold)}
+
+/* TOGGLE PILLS */
+.tpill{
+  border:none;border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;
+  cursor:pointer;font-family:var(--fb);transition:all .15s;white-space:nowrap;flex-shrink:0;
+}
+.tp-off{background:var(--red2);color:var(--red);border:1px solid var(--red3)}
+.tp-on{background:var(--green2);color:var(--green);border:1px solid var(--green3)}
+.tp-done{background:var(--purple2);color:var(--purple);border:1px solid var(--purple3);cursor:default}
+
+/* INLINE EDIT */
+.ie{
+  background:transparent;border:none;outline:none;font-family:var(--fh);
+  font-size:15px;font-weight:800;color:inherit;width:100%;text-align:right;
+  cursor:pointer;max-width:100px;
+}
+.ie:focus{background:var(--s3);border-radius:5px;padding:2px 5px;cursor:text}
+.ie-name{
+  background:transparent;border:none;outline:none;font-weight:600;
+  color:var(--tx);font-size:13px;width:100%;cursor:pointer;font-family:var(--fb);
+}
+.ie-name:focus{background:var(--s3);border-radius:5px;padding:2px 5px;cursor:text}
+
+/* GOAL CARD */
+.goal-card{border-radius:16px;padding:20px;margin-bottom:12px;border:1px solid}
+.goal-icon{font-size:32px;margin-bottom:10px}
+.goal-name{font-family:var(--fh);font-size:18px;font-weight:800;margin-bottom:4px}
+.goal-desc{font-size:12px;margin-bottom:16px;opacity:.65}
+.goal-nums{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.goal-current{font-family:var(--fh);font-size:26px;font-weight:800}
+.goal-target{font-size:13px;opacity:.55;padding-bottom:3px}
+.goal-pct{font-family:var(--fh);font-size:15px;font-weight:800;margin-left:auto}
+.goal-inp{
+  background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);border-radius:9px;
+  padding:9px 12px;font-size:13px;color:#fff;outline:none;font-family:var(--fb);
+  transition:border-color .2s;
+}
+.goal-inp:focus{border-color:rgba(255,255,255,.35)}
+.goal-inp::placeholder{opacity:.4}
+
+/* MONTH SUMMARY ROW */
+.msrow{
+  display:grid;grid-template-columns:44px 1fr auto auto auto;align-items:center;
+  gap:8px;padding:10px 0;border-bottom:1px solid var(--bdr);
+}
+.msrow:last-child{border-bottom:none}
+.ms-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ms-m{font-family:var(--fh);font-weight:700;font-size:12px;color:var(--mu)}
+
+/* CONTA ROW */
+.conta-row{
+  display:grid;grid-template-columns:1fr auto auto auto;
+  align-items:center;gap:8px;padding:10px 12px;
+  border-bottom:1px solid var(--bdr);transition:background .12s;
+}
+.conta-row:hover{background:rgba(255,255,255,.018)}
+.conta-row:last-child{border-bottom:none}
+.conta-row.done{opacity:.38}
+.conta-row.paid{opacity:.6}
+
+/* SECTION DIVIDERS */
+.sec-divider{
+  padding:8px 12px 5px;font-size:10px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--mu);background:var(--s2);
+  border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);
+}
+
+/* ALERT */
+.alert{border-radius:10px;padding:11px 14px;font-size:12px;margin-bottom:8px;
+  display:flex;gap:9px;border:1px solid;line-height:1.5;align-items:flex-start}
+.alert .ai{font-size:16px;flex-shrink:0;margin-top:1px}
+.alert strong{display:block;font-weight:700;margin-bottom:2px}
+.alert.g{background:var(--green2);border-color:var(--green3);color:var(--green)}
+.alert.gd{background:var(--gold2);border-color:var(--gold3);color:var(--gold)}
+.alert.r{background:var(--red2);border-color:var(--red3);color:var(--red)}
+.alert.b{background:var(--blue2);border-color:var(--blue3);color:var(--blue)}
+.alert p{color:rgba(255,255,255,.55);font-size:11px;margin-top:1px}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(70px);
+  background:var(--s1);border:1px solid var(--bdr);border-radius:12px;
+  padding:10px 20px;font-size:13px;font-weight:600;z-index:500;
+  transition:transform .28s cubic-bezier(.4,0,.2,1);white-space:nowrap;
+  box-shadow:0 10px 30px rgba(0,0,0,.6);
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.g{border-color:var(--green3);color:var(--green)}
+.toast.r{border-color:var(--red3);color:var(--red)}
+.toast.gd{border-color:var(--gold3);color:var(--gold)}
+
+/* SAVE BADGE */
+.sbadge{
+  font-size:11px;font-weight:700;color:var(--green);opacity:0;
+  transition:opacity .35s;display:flex;align-items:center;gap:4px;
+}
+
+/* EMPTY */
+.empty{text-align:center;padding:36px 16px;color:var(--mu)}
+.empty .ei{font-size:36px;margin-bottom:10px}
+.empty p{font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- ════════ LOCK ════════ -->
+<div id="lock">
+  <div class="lock-icon">💖</div>
+  <div class="lock-phrase">"Cuide bem do seu dinheiro hoje, para ele cuidar de você amanhã"</div>
+  <div class="lock-by">— Fernanda · Liberdade Financeira 💕</div>
+  <div class="lock-label">Código de acesso</div>
+  <input class="lock-pin" id="pin" type="password" inputmode="numeric" maxlength="4"
+    placeholder="••••" autocomplete="off"
+    oninput="if(this.value.length===4)doLogin()"
+    onkeydown="if(event.key==='Enter')doLogin()">
+  <button class="lock-btn" onclick="doLogin()">Entrar →</button>
+  <div class="lock-err" id="perr"></div>
+</div>
+
+<!-- ════════ APP ════════ -->
+<div id="app">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="nb">💰 R&F</div>
+      <div class="nt on" onclick="go('inicio')"><div class="ni">🏠</div>Início</div>
+      <div class="nt" onclick="go('ganhos')"><div class="ni">💵</div>Ganhos</div>
+      <div class="nt" onclick="go('contas')"><div class="ni">📋</div>Contas</div>
+      <div class="nt" onclick="go('investimento')"><div class="ni">📈</div>Investir</div>
+      <div class="nt" onclick="go('viagem')"><div class="ni">✈️</div>Viagem</div>
+      <div class="nt" onclick="go('lazer')"><div class="ni">🎉</div>Lazer</div>
+      <div class="nt" onclick="go('sugestoes')"><div class="ni">💡</div>Sugestões</div>
+      <div class="nt" onclick="go('backup')"><div class="ni">⚙️</div>Backup</div>
+    </div>
+  </nav>
+
+  <!-- MONTH BAR -->
+  <div style="background:var(--s1);border-bottom:1px solid var(--bdr);">
+    <div class="month-bar" id="month-bar"></div>
+  </div>
+
+  <!-- ══ INÍCIO ══════════════════════════════════ -->
+  <div id="pg-inicio" class="pg on">
+    <div class="ph">
+      <div>
+        <div class="ph-title" id="ini-greeting">Olá! 👋</div>
+        <div class="ph-sub" id="ini-date"></div>
+      </div>
+      <div class="sbadge" id="sb-ini">💾 Salvo</div>
+    </div>
+
+    <!-- Hero saldo -->
+    <div style="background:linear-gradient(135deg,#1f0d2a 0%,#2d1540 100%);border:1px solid rgba(255,107,157,.18);border-radius:18px;padding:24px;margin-bottom:14px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:-10px;right:-10px;font-size:90px;opacity:.05;pointer-events:none">💖</div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(245,200,66,.6);margin-bottom:8px">SALDO DISPONÍVEL</div>
+      <div style="font-family:var(--fh);font-size:38px;font-weight:800;color:var(--gold);line-height:1;" id="ini-saldo">R$ 0,00</div>
+      <div style="font-size:12px;color:var(--mu);margin-top:8px;" id="ini-saldo-sub">—</div>
+    </div>
+
+    <div class="k4" id="ini-kpis"></div>
+
+    <div class="card" id="ini-bars"></div>
+
+    <div id="ini-alerts"></div>
+
+    <!-- Monthly overview table -->
+    <div class="card">
+      <div class="ctitle">Histórico mensal</div>
+      <div id="ini-hist-table"></div>
+    </div>
+  </div>
+
+  <!-- ══ GANHOS ═══════════════════════════════════ -->
+  <div id="pg-ganhos" class="pg">
+    <div class="ph">
+      <div><div class="ph-title">💵 Ganhos</div><div class="ph-sub" id="g-mes-label"></div></div>
+      <div class="sbadge" id="sb-g">💾 Salvo</div>
+    </div>
+
+    <!-- Add income -->
+    <div class="card">
+      <div class="ctitle">Registrar recebimento</div>
+      <div class="inp-row" style="margin-bottom:10px">
+        <div class="inp-group" style="flex:2">
+          <label>De quem / O quê</label>
+          <input class="inp" id="gn" placeholder="ex: Salário, Daniel, Freelance…" onkeydown="if(event.key==='Enter')addGanho()">
+        </div>
+        <div class="inp-group">
+          <label>Tipo</label>
+          <select class="inp" id="gt">
+            <option value="salario">💼 Salário</option>
+            <option value="aluno">👤 Aluno</option>
+            <option value="extra">⭐ Extra</option>
+            <option value="outro">📦 Outro</option>
+          </select>
+        </div>
+      </div>
+      <div class="inp-row">
+        <div class="inp-group" style="flex:2">
+          <label>Valor (R$)</label>
+          <input class="inp" id="gv" type="number" min="0" step="0.01" placeholder="0,00" style="font-size:18px;font-weight:700;font-family:var(--fh)" onkeydown="if(event.key==='Enter')addGanho()">
+        </div>
+        <div class="inp-group">
+          <label>Data</label>
+          <input class="inp" id="gd" type="date">
+        </div>
+        <div class="inp-group" style="flex:0;align-self:flex-end">
+          <button class="btn btn-gd" onclick="addGanho()">＋ Registrar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="k2" id="g-kpis"></div>
+
+    <!-- Breakdown by type -->
+    <div class="card">
+      <div class="ctitle">Por tipo</div>
+      <div id="g-tipos"></div>
+    </div>
+
+    <div class="card">
+      <div class="ctitle">Registros do mês</div>
+      <div id="g-lista"></div>
+    </div>
+  </div>
+
+  <!-- ══ CONTAS ════════════════════════════════════ -->
+  <div id="pg-contas" class="pg">
+    <div class="ph">
+      <div><div class="ph-title">📋 Contas ÷ 2</div><div class="ph-sub">Sua metade — clique nos valores para editar</div></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="sbadge" id="sb-c">💾 Salvo</div>
+      </div>
+    </div>
+
+    <div class="k4" id="c-kpis"></div>
+    <div id="c-prog" style="margin-bottom:12px"></div>
+
+    <div style="background:var(--s1);border:1px solid var(--bdr);border-radius:16px;overflow:hidden;margin-bottom:12px">
+      <!-- Header -->
+      <div style="display:grid;grid-template-columns:1fr 90px 64px 110px;background:var(--s2);border-bottom:1px solid var(--bdr);padding:9px 12px;gap:8px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--mu)">Conta</div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--mu);text-align:right">Sua parte</div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--mu);text-align:center">Parc.</div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--mu);text-align:right;padding-right:4px">Status</div>
+      </div>
+      <div id="c-lista"></div>
+      <!-- Add inline -->
+      <div style="padding:11px 12px;background:var(--s2);border-top:1px solid var(--bdr);display:flex;gap:7px;flex-wrap:wrap">
+        <input class="inp" id="cn" placeholder="Nome da conta…" style="flex:2;min-width:100px;background:var(--s1)" onkeydown="if(event.key==='Enter')addConta()">
+        <input class="inp" id="cv" type="number" min="0" step="0.01" placeholder="Valor total" style="flex:1;min-width:80px;background:var(--s1)" onkeydown="if(event.key==='Enter')addConta()">
+        <select class="inp" id="ctp" style="flex:1;min-width:90px;background:var(--s1)">
+          <option value="fixo">🔵 Fixa</option>
+          <option value="variavel">🟡 Variável</option>
+          <option value="parcelado">🔴 Parcelada</option>
+        </select>
+        <input class="inp" id="cpa" type="number" min="1" value="1" placeholder="×" style="max-width:54px;background:var(--s1)" onkeydown="if(event.key==='Enter')addConta()">
+        <button class="btn btn-gd btn-sm" onclick="addConta()">＋</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ INVESTIMENTO ═══════════════════════════════ -->
+  <div id="pg-investimento" class="pg">
+    <div class="ph">
+      <div><div class="ph-title">📈 Investimentos</div><div class="ph-sub">Patrimônio crescendo mês a mês</div></div>
+      <div class="sbadge" id="sb-inv">💾 Salvo</div>
+    </div>
+
+    <div class="k4" id="inv-kpis"></div>
+
+    <!-- Goal card -->
+    <div class="goal-card" style="background:linear-gradient(135deg,rgba(79,159,255,.12),rgba(180,143,255,.08));border-color:var(--blue3);color:var(--blue)">
+      <div class="goal-icon">📈</div>
+      <div class="goal-name">Meta de Patrimônio</div>
+      <div class="goal-desc">Defina sua meta e aporte todo mês</div>
+      <div class="goal-nums">
+        <div class="goal-current" id="inv-atual" style="color:var(--blue)">R$ 0</div>
+        <div class="goal-target" id="inv-meta-txt">meta: R$ 0</div>
+        <div class="goal-pct" id="inv-pct" style="color:var(--blue)">0%</div>
+      </div>
+      <div class="pt" style="height:8px;background:rgba(0,0,0,.3);margin-bottom:16px"><div class="pf b" id="inv-bar" style="width:0%"></div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <div style="flex:1;min-width:100px">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">Meta (R$)</div>
+          <input class="goal-inp" type="number" id="inv-meta" placeholder="50000" min="0" oninput="saveInv()">
+        </div>
+        <div style="flex:1;min-width:100px">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">Aporte mensal (R$)</div>
+          <input class="goal-inp" type="number" id="inv-mensal" placeholder="500" min="0" oninput="saveInv()">
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input class="goal-inp" type="number" id="inv-aportar" placeholder="Valor a aportar agora (R$)" min="0" step="0.01" style="flex:2;min-width:120px" onkeydown="if(event.key==='Enter')aportarInv()">
+        <button class="btn btn-sm" style="background:var(--blue2);border:1px solid var(--blue3);color:var(--blue)" onclick="aportarInv()">＋ Aportar</button>
+      </div>
+    </div>
+
+    <!-- Where invested -->
+    <div class="card">
+      <div class="ctitle">Onde está investido</div>
+      <div id="inv-cats"></div>
+      <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap">
+        <input class="inp" id="invc-n" placeholder="Ex: Tesouro Selic, CDB…" style="flex:2;min-width:100px">
+        <input class="inp" id="invc-v" type="number" min="0" placeholder="Valor" style="flex:1;min-width:80px">
+        <button class="btn btn-sm btn-b" onclick="addInvCat()">＋</button>
+      </div>
+    </div>
+
+    <!-- Monthly progress chart -->
+    <div class="card">
+      <div class="ctitle">Evolução mensal</div>
+      <div id="inv-evolucao"></div>
+    </div>
+
+    <div class="card">
+      <div class="ctitle">Histórico de aportes</div>
+      <div id="inv-hist"></div>
+    </div>
+  </div>
+
+  <!-- ══ VIAGEM ═════════════════════════════════════ -->
+  <div id="pg-viagem" class="pg">
+    <div class="ph">
+      <div><div class="ph-title">✈️ Viagem em Família</div><div class="ph-sub">Juntando para o próximo destino</div></div>
+      <div class="sbadge" id="sb-v">💾 Salvo</div>
+    </div>
+
+    <div class="k4" id="v-kpis"></div>
+
+    <div class="goal-card" style="background:linear-gradient(135deg,rgba(0,212,170,.1),rgba(79,159,255,.07));border-color:var(--cyan3);color:var(--cyan)">
+      <div class="goal-icon">✈️</div>
+      <input style="background:transparent;border:none;outline:none;font-family:var(--fh);font-size:19px;font-weight:800;color:#fff;width:100%;cursor:pointer;margin-bottom:4px" id="v-destino" placeholder="Destino (ex: Salvador, Maceió…)" oninput="saveViagem()">
+      <div class="goal-desc" id="v-prazo-txt">Configure a meta abaixo</div>
+      <div class="goal-nums">
+        <div class="goal-current" id="v-atual" style="color:var(--cyan)">R$ 0</div>
+        <div class="goal-target" id="v-meta-txt">meta: R$ 0</div>
+        <div class="goal-pct" id="v-pct" style="color:var(--cyan)">0%</div>
+      </div>
+      <div class="pt" style="height:8px;background:rgba(0,0,0,.3);margin-bottom:16px"><div class="pf c" id="v-bar" style="width:0%"></div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <div style="flex:1;min-width:100px">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">Meta (R$)</div>
+          <input class="goal-inp" type="number" id="v-meta" placeholder="8000" min="0" oninput="saveViagem()">
+        </div>
+        <div style="flex:1;min-width:100px">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">Data prevista</div>
+          <input class="goal-inp" type="month" id="v-date" oninput="saveViagem()">
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input class="goal-inp" type="number" id="v-aportar" placeholder="Guardar agora (R$)" min="0" step="0.01" style="flex:2;min-width:120px" onkeydown="if(event.key==='Enter')aportarViagem()">
+        <button class="btn btn-sm" style="background:var(--cyan2);border:1px solid var(--cyan3);color:var(--cyan)" onclick="aportarViagem()">✈️ Guardar</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ctitle">Gastos planejados da viagem</div>
+      <div id="v-itens"></div>
+      <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap">
+        <input class="inp" id="vi-n" placeholder="Item (ex: Passagem, Hotel, Passeio…)" style="flex:2;min-width:100px">
+        <input class="inp" id="vi-v" type="number" min="0" placeholder="Valor" style="flex:1;min-width:80px" onkeydown="if(event.key==='Enter')addVItem()">
+        <button class="btn btn-sm" style="background:var(--cyan2);border:1px solid var(--cyan3);color:var(--cyan)" onclick="addVItem()">＋</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ctitle">Histórico — aportes para viagem</div>
+      <div id="v-hist"></div>
+    </div>
+  </div>
+
+  <!-- ══ LAZER ══════════════════════════════════════ -->
+  <div id="pg-lazer" class="pg">
+    <div class="ph">
+      <div><div class="ph-title">🎉 Lazer Pessoal</div><div class="ph-sub">Você merece curtir!</div></div>
+      <div class="sbadge" id="sb-l">💾 Salvo</div>
+    </div>
+
+    <div class="k4" id="l-kpis"></div>
+
+    <div class="goal-card" style="background:linear-gradient(135deg,rgba(255,107,157,.1),rgba(180,143,255,.07));border-color:var(--pink3);color:var(--pink)">
+      <div class="goal-icon">🎉</div>
+      <div class="goal-name">Orçamento Mensal de Lazer</div>
+      <div class="goal-desc">Quanto você reserva para se divertir por mês</div>
+      <div class="goal-nums">
+        <div class="goal-current" id="l-gasto" style="color:var(--pink)">R$ 0 gasto</div>
+        <div class="goal-target" id="l-orc-txt">orçamento: R$ 0</div>
+        <div class="goal-pct" id="l-pct" style="color:var(--pink)">0%</div>
+      </div>
+      <div class="pt" style="height:8px;background:rgba(0,0,0,.3);margin-bottom:16px"><div class="pf pk" id="l-bar" style="width:0%"></div></div>
+      <div style="flex:1;max-width:200px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">Orçamento mensal (R$)</div>
+        <input class="goal-inp" type="number" id="l-orc" placeholder="Ex: 400" min="0" oninput="saveLazer()">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ctitle">Registrar gasto de lazer</div>
+      <div class="inp-row">
+        <div class="inp-group" style="flex:2">
+          <label>O que foi?</label>
+          <input class="inp" id="ld" placeholder="ex: Cinema, Restaurante, Show…" onkeydown="if(event.key==='Enter')addLazer()">
+        </div>
+        <div class="inp-group">
+          <label>Valor (R$)</label>
+          <input class="inp" id="lv" type="number" min="0" step="0.01" placeholder="0,00" style="font-family:var(--fh);font-size:16px;font-weight:700" onkeydown="if(event.key==='Enter')addLazer()">
+        </div>
+        <div class="inp-group">
+          <label>Data</label>
+          <input class="inp" id="ldt" type="date">
+        </div>
+        <div class="inp-group" style="flex:0;align-self:flex-end">
+          <button class="btn btn-gd" onclick="addLazer()">＋</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ctitle">Gastos deste mês</div>
+      <div id="l-lista"></div>
+    </div>
+
+    <div class="card">
+      <div class="ctitle">Histórico mensal de lazer</div>
+      <div id="l-hist-mensal"></div>
+    </div>
+  </div>
+
+  <!-- ══ SUGESTÕES ═══════════════════════════════════ -->
+  <div id="pg-sugestoes" class="pg">
+
+    <div class="ph">
+      <div><div class="ph-title">💡 Consultoria Financeira</div><div class="ph-sub">Diagnóstico + sugestões baseadas na sua realidade</div></div>
+    </div>
+
+    <!-- SCORE CARD -->
+    <div id="sug-score-card" style="border-radius:18px;padding:20px;margin-bottom:14px;position:relative;overflow:hidden;background:linear-gradient(135deg,#1a0c28,#281540);border:1px solid rgba(255,107,157,.22)">
+      <div style="position:absolute;top:-15px;right:-15px;font-size:90px;opacity:.04;pointer-events:none;line-height:1">💡</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,107,157,.6);margin-bottom:12px">DIAGNÓSTICO DO MÊS</div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px">
+        <svg width="76" height="76" viewBox="0 0 76 76" style="flex-shrink:0">
+          <circle cx="38" cy="38" r="30" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7"/>
+          <circle id="sug-arc" cx="38" cy="38" r="30" fill="none" stroke="#ff6b9d" stroke-width="7"
+            stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5"
+            transform="rotate(-90 38 38)" style="transition:stroke-dashoffset .9s ease,stroke .5s"/>
+          <text x="38" y="44" text-anchor="middle" font-family="Bricolage Grotesque,sans-serif"
+            font-size="18" font-weight="800" fill="#ff6b9d" id="sug-score-num">—</text>
+        </svg>
+        <div style="flex:1">
+          <div id="sug-score-label" style="font-family:var(--fh);font-size:19px;font-weight:800;margin-bottom:4px">Calculando…</div>
+          <div id="sug-score-desc" style="font-size:12px;color:var(--mu);line-height:1.5"></div>
+        </div>
+      </div>
+      <div id="sug-score-itens" style="display:grid;gap:5px"></div>
+    </div>
+
+    <!-- CALCULADORA -->
+    <div class="card" style="border-color:var(--gold3)">
+      <div class="ctitle">🧮 Calculadora Personalizada</div>
+      <div style="font-size:12px;color:var(--mu);margin-bottom:14px">Preencha para receber a distribuição ideal do seu dinheiro</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+        <div class="inp-group">
+          <label>Renda total mensal (R$)</label>
+          <input class="inp" id="sug-renda" type="number" min="0" placeholder="ex: 6000" oninput="renderSugestoes()" style="font-size:15px;font-weight:700;font-family:var(--fh)">
+        </div>
+        <div class="inp-group">
+          <label>Consigo guardar/mês (R$)</label>
+          <input class="inp" id="sug-sobra" type="number" min="0" placeholder="ex: 800" oninput="renderSugestoes()" style="font-size:15px;font-weight:700;font-family:var(--fh)">
+        </div>
+      </div>
+      <div id="sug-calc-empty" style="font-size:12px;color:var(--mu)">Preencha os campos acima para ver a distribuição personalizada.</div>
+      <div id="sug-calc-result" style="display:none">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap">
+          <svg id="sug-pizza" width="110" height="110" viewBox="0 0 110 110" style="flex-shrink:0"></svg>
+          <div id="sug-pizza-leg" style="flex:1;display:grid;gap:5px;min-width:140px"></div>
+        </div>
+        <div id="sug-dist" style="display:grid;gap:7px"></div>
+        <div id="sug-obs" style="margin-top:10px;font-size:11px;color:var(--mu);line-height:1.6;padding:10px 12px;background:var(--s2);border-radius:8px;border-left:3px solid var(--gold)"></div>
+      </div>
+    </div>
+
+    <!-- RESERVA -->
+    <div class="card" style="border-color:var(--red3)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--red2);border:1px solid var(--red3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🛡️</div>
+        <div><div style="font-family:var(--fh);font-size:15px;font-weight:800">Reserva de Emergência</div><div style="font-size:11px;color:var(--red);font-weight:700">PRIORIDADE #1 — Antes de qualquer investimento</div></div>
+      </div>
+      <p style="font-size:12px;color:var(--mu);line-height:1.7;margin-bottom:14px">Dinheiro guardado para imprevistos: demissão, doença, carro. Sem ela você acaba pegando empréstimo caro na hora da crise.</p>
+      <div class="k2" style="margin-bottom:12px" id="sug-re-kpis"></div>
+      <div id="sug-re-prog" style="margin-bottom:14px"></div>
+      <div style="background:var(--s2);border-radius:12px;padding:14px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mu);margin-bottom:10px">Onde guardar</div>
+        <div style="display:grid;gap:7px">
+          <div style="display:flex;align-items:center;gap:10px;padding:9px;background:var(--s1);border-radius:9px;border:1px solid var(--bdr)">
+            <span style="font-size:18px">🏆</span>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700">Tesouro Selic</div><div style="font-size:11px;color:var(--mu)">Segurança máxima · resgate D+1</div></div>
+            <span style="font-size:11px;font-weight:700;color:var(--green);white-space:nowrap">~13% a.a.</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px;background:var(--s1);border-radius:9px;border:1px solid var(--bdr)">
+            <span style="font-size:18px">🥈</span>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700">CDB Liquidez Diária 100% CDI</div><div style="font-size:11px;color:var(--mu)">Nubank, Inter, PicPay · resgate no dia</div></div>
+            <span style="font-size:11px;font-weight:700;color:var(--gold);white-space:nowrap">~12% a.a.</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px;background:var(--s1);border-radius:9px;border:1px solid var(--bdr);opacity:.55">
+            <span style="font-size:18px">❌</span>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700;text-decoration:line-through">Poupança</div><div style="font-size:11px;color:var(--mu)">Perde para a inflação — evite sempre</div></div>
+            <span style="font-size:11px;font-weight:700;color:var(--red);white-space:nowrap">~6% a.a.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIAGEM -->
+    <div class="card" style="border-color:var(--cyan3)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--cyan2);border:1px solid var(--cyan3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">✈️</div>
+        <div><div style="font-family:var(--fh);font-size:15px;font-weight:800">Planejamento de Viagem</div><div style="font-size:11px;color:var(--cyan);font-weight:700">Meta integrada com seus dados</div></div>
+      </div>
+      <div id="sug-viagem-calc"></div>
+      <div style="background:var(--s2);border-radius:12px;padding:14px;margin-top:12px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mu);margin-bottom:8px">Dicas de economia para viagens</div>
+        <div style="display:grid;gap:5px">
+          <div style="display:flex;gap:8px;font-size:12px;color:var(--mu)"><span style="color:var(--cyan);font-weight:700;flex-shrink:0">01.</span>Conta separada só para viagem — não misture com outras metas</div>
+          <div style="display:flex;gap:8px;font-size:12px;color:var(--mu)"><span style="color:var(--cyan);font-weight:700;flex-shrink:0">02.</span>Transferência automática no dia do salário</div>
+          <div style="display:flex;gap:8px;font-size:12px;color:var(--mu)"><span style="color:var(--cyan);font-weight:700;flex-shrink:0">03.</span>Guarde em CDB curto prazo ou Tesouro Selic — não na conta corrente</div>
+          <div style="display:flex;gap:8px;font-size:12px;color:var(--mu)"><span style="color:var(--cyan);font-weight:700;flex-shrink:0">04.</span>Passagens com 6-12 meses de antecedência = até 40% mais barato</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PIRÂMIDE -->
+    <div class="card" style="border-color:var(--blue3)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--blue2);border:1px solid var(--blue3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📈</div>
+        <div><div style="font-family:var(--fh);font-size:15px;font-weight:800">Pirâmide de Investimentos</div><div style="font-size:11px;color:var(--blue);font-weight:700">Construa de baixo para cima — nunca pule etapas</div></div>
+      </div>
+      <div id="sug-piramide" style="display:grid;gap:5px;margin-bottom:16px"></div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mu);margin-bottom:10px">Escolha seu perfil de investidor</div>
+      <div style="display:flex;gap:6px;margin-bottom:12px">
+        <button onclick="setSugPerfil('conservador')" id="sug-tab-conservador" class="btn btn-sm btn-ghost" style="flex:1">😌 Conservador</button>
+        <button onclick="setSugPerfil('moderado')"    id="sug-tab-moderado"    class="btn btn-sm btn-ghost" style="flex:1">⚖️ Moderado</button>
+        <button onclick="setSugPerfil('arrojado')"    id="sug-tab-arrojado"    class="btn btn-sm btn-ghost" style="flex:1">🚀 Arrojado</button>
+      </div>
+      <div id="sug-opcoes"></div>
+    </div>
+
+    <!-- DÍVIDAS -->
+    <div class="card" style="border-color:var(--purple3)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--purple2);border:1px solid var(--purple3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🎯</div>
+        <div><div style="font-family:var(--fh);font-size:15px;font-weight:800">Estratégia Bola de Neve</div><div style="font-size:11px;color:var(--purple);font-weight:700">Menor dívida primeiro — libera fôlego rápido</div></div>
+      </div>
+      <div id="sug-dividas"></div>
+    </div>
+
+    <!-- 50/30/20 -->
+    <div class="card" style="border-color:var(--green3)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--green2);border:1px solid var(--green3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">⚖️</div>
+        <div><div style="font-family:var(--fh);font-size:15px;font-weight:800">Regra 50 / 30 / 20</div><div style="font-size:11px;color:var(--green);font-weight:700">A distribuição clássica que funciona</div></div>
+      </div>
+      <p style="font-size:12px;color:var(--mu);line-height:1.6;margin-bottom:14px">Criada por Elizabeth Warren. Simples, poderosa, e funciona para qualquer renda.</p>
+      <div id="sug-5030"></div>
+      <div id="sug-5030-bar" style="margin-top:14px"></div>
+    </div>
+
+    <!-- PRINCÍPIOS -->
+    <div class="card">
+      <div class="ctitle">⚡ Princípios de Ouro</div>
+      <div style="display:grid;gap:8px">
+        <div style="display:flex;gap:12px;padding:12px;background:var(--s2);border-radius:10px">
+          <span style="font-size:22px;flex-shrink:0">🏦</span>
+          <div><div style="font-size:13px;font-weight:700;margin-bottom:3px">Automatize — pague-se primeiro</div><div style="font-size:12px;color:var(--mu);line-height:1.5">Configure débito automático no dia do salário para investimentos. O que não vê, não gasta.</div></div>
+        </div>
+        <div style="display:flex;gap:12px;padding:12px;background:var(--s2);border-radius:10px">
+          <span style="font-size:22px;flex-shrink:0">📊</span>
+          <div><div style="font-size:13px;font-weight:700;margin-bottom:3px">Diversifique sempre</div><div style="font-size:12px;color:var(--mu);line-height:1.5">Tesouro Selic (segurança) + CDB/LCI (renda fixa) + FIIs/ações (crescimento). Nunca concentre tudo num só lugar.</div></div>
+        </div>
+        <div style="display:flex;gap:12px;padding:12px;background:var(--gold2);border-radius:10px;border:1px solid var(--gold3)">
+          <span style="font-size:22px;flex-shrink:0">⏳</span>
+          <div><div style="font-size:13px;font-weight:700;margin-bottom:3px;color:var(--gold)">O tempo é seu maior aliado</div><div style="font-size:12px;color:var(--mu);line-height:1.5">R$ 300/mês a 12% a.a. por 10 anos = R$ 69.000. Por 20 anos = R$ 266.000. Comece hoje.</div></div>
+        </div>
+        <div style="display:flex;gap:12px;padding:12px;background:var(--red2);border-radius:10px;border:1px solid var(--red3)">
+          <span style="font-size:22px;flex-shrink:0">🚫</span>
+          <div><div style="font-size:13px;font-weight:700;margin-bottom:3px;color:var(--red)">Evite o rotativo do cartão</div><div style="font-size:12px;color:var(--mu);line-height:1.5">Juros chegam a 400% ao ano. Se não pagou tudo, parcele imediatamente. Nunca pague só o mínimo.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ BACKUP ═══════════════════════════════════ -->
+  <div id="pg-backup" class="pg">
+
+    <div class="ph">
+      <div><div class="ph-title">⚙️ Backup & Restore</div><div class="ph-sub">Proteja seus dados — exporte antes de trocar de celular</div></div>
+    </div>
+
+    <!-- STATUS -->
+    <div id="bk-status-card" style="border-radius:16px;padding:18px;margin-bottom:14px;background:var(--s1);border:1px solid var(--bdr)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <div style="width:44px;height:44px;border-radius:12px;background:var(--green2);border:1px solid var(--green3);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">💾</div>
+        <div>
+          <div style="font-family:var(--fh);font-size:15px;font-weight:800">Status do Backup</div>
+          <div id="bk-last-save" style="font-size:12px;color:var(--mu);margin-top:2px">Verificando…</div>
+        </div>
+      </div>
+      <div id="bk-summary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
+    </div>
+
+    <!-- EXPORTAR -->
+    <div class="card" style="border-color:var(--green3)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--green2);border:1px solid var(--green3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📤</div>
+        <div><div style="font-family:var(--fh);font-size:15px;font-weight:800">Exportar Dados</div><div style="font-size:11px;color:var(--green);font-weight:700">Salva um arquivo JSON com tudo</div></div>
+      </div>
+      <p style="font-size:12px;color:var(--mu);line-height:1.6;margin-bottom:14px">Clique no botão abaixo para baixar um arquivo de backup completo com todos os seus ganhos, contas, investimentos, metas e histórico.</p>
+      <button class="btn btn-g btn-full" style="font-size:14px;padding:13px" onclick="exportarDados()">
+        📥 Baixar Backup (JSON)
+      </button>
+      <div id="bk-export-ok" style="display:none;margin-top:10px" class="alert g">
+        <div class="ai">✅</div>
+        <div><strong>Backup salvo!</strong><p id="bk-export-nome">—</p></div>
+      </div>
+    </div>
+
+    <!-- IMPORTAR -->
+    <div class="card" style="border-color:var(--blue3)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--blue2);border:1px solid var(--blue3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📥</div>
+        <div><div style="font-family:var(--fh);font-size:15px;font-weight:800">Importar / Restaurar</div><div style="font-size:11px;color:var(--blue);font-weight:700">Carrega um backup anterior</div></div>
+      </div>
+      <p style="font-size:12px;color:var(--mu);line-height:1.6;margin-bottom:14px">Selecione um arquivo <strong style="color:var(--tx)">.json</strong> gerado por este app. <strong style="color:var(--red)">Atenção:</strong> isso substituirá todos os dados atuais.</p>
+      <label style="display:block;background:var(--s2);border:2px dashed var(--bdr2);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s" id="bk-drop-zone"
+        ondragover="event.preventDefault();this.style.borderColor='var(--blue)'"
+        ondragleave="this.style.borderColor=''"
+        ondrop="bkDrop(event)">
+        <div style="font-size:32px;margin-bottom:8px">📂</div>
+        <div style="font-size:13px;font-weight:600;color:var(--tx)">Toque para selecionar o arquivo</div>
+        <div style="font-size:11px;color:var(--mu);margin-top:4px">ou arraste o .json aqui</div>
+        <input type="file" id="bk-file" accept=".json" style="display:none" onchange="importarDados(this)">
+      </label>
+      <div id="bk-import-preview" style="display:none;margin-top:12px;background:var(--s2);border-radius:12px;padding:14px">
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px;color:var(--gold)">📋 Dados encontrados no arquivo:</div>
+        <div id="bk-preview-content" style="display:grid;gap:5px;margin-bottom:12px"></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-b" style="flex:1" onclick="confirmarImport()">✅ Confirmar Restauração</button>
+          <button class="btn btn-ghost" onclick="cancelarImport()">✖ Cancelar</button>
+        </div>
+      </div>
+      <div id="bk-import-ok" style="display:none;margin-top:10px" class="alert g">
+        <div class="ai">✅</div>
+        <div><strong>Dados restaurados!</strong><p>App recarregado com o backup.</p></div>
+      </div>
+      <div id="bk-import-err" style="display:none;margin-top:10px" class="alert r">
+        <div class="ai">⚠️</div>
+        <div><strong>Arquivo inválido</strong><p id="bk-err-msg">Certifique-se de usar um arquivo gerado por este app.</p></div>
+      </div>
+    </div>
+
+    <!-- LIMPAR DADOS -->
+    <div class="card" style="border-color:var(--red3)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--red2);border:1px solid var(--red3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🗑️</div>
+        <div><div style="font-family:var(--fh);font-size:15px;font-weight:800">Resetar App</div><div style="font-size:11px;color:var(--red);font-weight:700">Apaga todos os dados — não tem volta!</div></div>
+      </div>
+      <p style="font-size:12px;color:var(--mu);line-height:1.6;margin-bottom:14px">Remove tudo do armazenamento local deste dispositivo. Faça um backup antes!</p>
+      <div id="bk-reset-confirm" style="display:none;background:var(--red2);border:1px solid var(--red3);border-radius:12px;padding:14px;margin-bottom:10px">
+        <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:8px">⚠️ Tem certeza? Isso apaga TUDO.</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-r" style="flex:1" onclick="confirmarReset()">🗑️ Sim, apagar tudo</button>
+          <button class="btn btn-ghost" onclick="document.getElementById('bk-reset-confirm').style.display='none';document.getElementById('bk-reset-btn').style.display='block'">Cancelar</button>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-full" id="bk-reset-btn" onclick="this.style.display='none';document.getElementById('bk-reset-confirm').style.display='block'">
+        🗑️ Resetar todos os dados
+      </button>
+    </div>
+
+    <!-- COMO USAR -->
+    <div class="card">
+      <div class="ctitle">📖 Como usar em outro celular</div>
+      <div style="display:grid;gap:8px">
+        <div style="display:flex;gap:10px;padding:10px;background:var(--s2);border-radius:9px;align-items:flex-start">
+          <div style="width:22px;height:22px;border-radius:7px;background:var(--green2);border:1px solid var(--green3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--green);flex-shrink:0">1</div>
+          <div style="font-size:12px;color:var(--mu)"><strong style="color:var(--tx)">Neste celular:</strong> clique em "Baixar Backup" acima</div>
+        </div>
+        <div style="display:flex;gap:10px;padding:10px;background:var(--s2);border-radius:9px;align-items:flex-start">
+          <div style="width:22px;height:22px;border-radius:7px;background:var(--blue2);border:1px solid var(--blue3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--blue);flex-shrink:0">2</div>
+          <div style="font-size:12px;color:var(--mu)"><strong style="color:var(--tx)">Envie 2 arquivos pelo WhatsApp:</strong> o <code style="background:var(--s3);padding:1px 5px;border-radius:4px">.html</code> do app + o <code style="background:var(--s3);padding:1px 5px;border-radius:4px">.json</code> do backup</div>
+        </div>
+        <div style="display:flex;gap:10px;padding:10px;background:var(--s2);border-radius:9px;align-items:flex-start">
+          <div style="width:22px;height:22px;border-radius:7px;background:var(--gold2);border:1px solid var(--gold3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--gold);flex-shrink:0">3</div>
+          <div style="font-size:12px;color:var(--mu)"><strong style="color:var(--tx)">No novo celular:</strong> abra o .html, faça login e vá em ⚙️ Backup → Importar</div>
+        </div>
+        <div style="display:flex;gap:10px;padding:10px;background:var(--s2);border-radius:9px;align-items:flex-start">
+          <div style="width:22px;height:22px;border-radius:7px;background:var(--purple2);border:1px solid var(--purple3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--purple);flex-shrink:0">4</div>
+          <div style="font-size:12px;color:var(--mu)"><strong style="color:var(--tx)">Selecione o .json</strong> e confirme — todos os dados são restaurados!</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /app -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+// ═══════════════════════════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════════════════════════
+const PINS    = ['2505','0605']; // PINs da Fernanda
+const SK      = 'rf_fin_fernanda_v1'; // storage exclusivo Fernanda
+const NOW     = new Date();
+const CY      = NOW.getFullYear();
+const CM      = NOW.getMonth();
+const CD      = NOW.getDate();
+const MESES   = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const MESES_S = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const DIAS_S  = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+const BRL     = v => v==null?'—': v.toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2});
+const PCT     = (v,t) => t>0 ? Math.round(v/t*100) : 0;
+
+// ═══════════════════════════════════════════════════════════════
+// STORAGE — salva automaticamente a cada mudança
+// ═══════════════════════════════════════════════════════════════
+function ld(){ try{ return JSON.parse(localStorage.getItem(SK))||{}; }catch(e){ return {}; } }
+
+let _saveTimer = null;
+function sv(badge){
+  // Debounce: agrupa múltiplas chamadas em 300ms
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(()=>{
+    try{
+      ST._savedAt = new Date().toISOString();
+      localStorage.setItem(SK, JSON.stringify(ST));
+      // Mostra badge salvo
+      document.querySelectorAll('.sbadge').forEach(el=>{
+        el.style.opacity='1';
+        clearTimeout(el._t);
+        el._t = setTimeout(()=>{ el.style.opacity='0'; }, 1800);
+      });
+    }catch(e){ console.warn('save error',e); }
+  }, 300);
+}
+
+function toast(msg, type=''){
+  const el = document.getElementById('toast');
+  if(!el) return;
+  el.textContent = msg;
+  el.className = 'toast show' + (type?' '+type:'');
+  clearTimeout(el._t);
+  el._t = setTimeout(()=>{ el.className='toast'; }, 2200);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+let ST = ld();
+let CUR_MES = ST.curMes ?? CM;
+
+// Defaults
+if(!ST.meses)    ST.meses    = {};
+if(!ST.inv)      ST.inv      = {atual:0,meta:50000,mensal:500,cats:[],hist:[],byMes:{}};
+if(!ST.viagem)   ST.viagem   = {atual:0,meta:8000,destino:'',date:'',itens:[],hist:[]};
+if(!ST.lazer)    ST.lazer    = {orc:300,gastos:[],byMes:{}};
+if(!ST.parcHist) ST.parcHist = {};
+if(!ST.contas)   ST.contas   = [
+  {id:1, n:'Água',          t:'variavel',  cat:'Casa',       v:120,  p:1,  pg:0},
+  {id:2, n:'Luz',           t:'variavel',  cat:'Casa',       v:350,  p:1,  pg:0},
+  {id:3, n:'Internet',      t:'fixo',      cat:'Casa',       v:99,   p:1,  pg:0},
+  {id:4, n:'Condomínio',    t:'fixo',      cat:'Casa',       v:0,    p:1,  pg:0},
+  {id:5, n:'IPVA',          t:'parcelado', cat:'Transporte', v:700,  p:2,  pg:0},
+  {id:6, n:'IPTU',          t:'parcelado', cat:'Casa',       v:700,  p:2,  pg:0},
+  {id:7, n:'Dentista (família)',t:'parcelado',cat:'Saúde',      v:1000, p:4,  pg:0},
+  {id:8, n:'Escola Noah',   t:'fixo',      cat:'Educação',   v:1050, p:1,  pg:0},
+  {id:9, n:'Futsal Noah',   t:'fixo',      cat:'Educação',   v:150,  p:1,  pg:0},
+  {id:10,n:'Natação Noah',  t:'fixo',      cat:'Educação',   v:250,  p:1,  pg:0},
+  {id:11,n:'Empréstimo',    t:'parcelado', cat:'Dívidas',    v:5190, p:3,  pg:0},
+  {id:12,n:'Gastos pessoais',t:'fixo',     cat:'Pessoal',    v:300,  p:1,  pg:0},
+];
+sv(); // Salva estado inicial
+
+// ═══════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════
+const mesKey   = m => `${CY}-${String(m+1).padStart(2,'0')}`;
+const getMes   = m => { if(!ST.meses[mesKey(m)]) ST.meses[mesKey(m)]={ganhos:[],pagamentos:{}}; return ST.meses[mesKey(m)]; };
+const isQuit   = c => c.t==='parcelado' && c.pg>=c.p;
+const parcVal  = c => c.t==='parcelado' ? c.v/c.p : c.v;
+const meuVal   = c => parcVal(c)/2;
+const meuSaldo = c => c.t==='parcelado' ? (c.v/c.p/2)*Math.max(0,c.p-c.pg) : c.v/2;
+const totalMeu = () => ST.contas.reduce((s,c)=>s+meuVal(c),0);
+const ganhosMes       = m => getMes(m).ganhos||[];
+const totalGanhosMes  = m => ganhosMes(m).reduce((s,g)=>s+g.v,0);
+const pagamentosMes   = m => getMes(m).pagamentos||{};
+const statusPag       = (id,m) => pagamentosMes(m)[id]||'nao';
+const totalPagoMes    = m => ST.contas.filter(c=>statusPag(c.id,m)==='pago'||statusPag(c.id,m)==='quitado'||isQuit(c)).reduce((s,c)=>s+meuVal(c),0);
+const nCid = () => Math.max(0,...ST.contas.map(c=>c.id))+1;
+const nGid = m => Math.max(0,...ganhosMes(m).map(g=>g.id||0))+1;
+
+// ═══════════════════════════════════════════════════════════════
+// AUTO-SAVE: salva ao fechar/trocar de aba
+// ═══════════════════════════════════════════════════════════════
+window.addEventListener('beforeunload', ()=>{ localStorage.setItem(SK,JSON.stringify(ST)); });
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState==='hidden'){ localStorage.setItem(SK,JSON.stringify(ST)); }
+});
+
+// ═══════════════════════════════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════════════════════════════
+function doLogin(){
+  const v = document.getElementById('pin').value;
+  if(PINS.includes(v)){
+    document.getElementById('lock').style.display='none';
+    document.getElementById('app').classList.add('show');
+    initApp();
+  } else {
+    const p = document.getElementById('pin');
+    p.classList.add('wrong'); p.value='';
+    document.getElementById('perr').textContent='Código incorreto.';
+    setTimeout(()=>p.classList.remove('wrong'),500);
+  }
+}
+
+function initApp(){
+  const today = NOW;
+  document.getElementById('ini-date').textContent =
+    DIAS_S[today.getDay()]+', '+CD+' de '+MESES[CM]+' de '+CY;
+  document.getElementById('ini-greeting').textContent = 'Olá, Fernanda! 💕';
+  const todayStr = today.toISOString().split('T')[0];
+  const gd = document.getElementById('gd'); if(gd) gd.value=todayStr;
+  const ldt = document.getElementById('ldt'); if(ldt) ldt.value=todayStr;
+  if(ST.inv.meta)       { const el=document.getElementById('inv-meta');    if(el) el.value=ST.inv.meta; }
+  if(ST.inv.mensal)     { const el=document.getElementById('inv-mensal');  if(el) el.value=ST.inv.mensal; }
+  if(ST.viagem.meta)    { const el=document.getElementById('v-meta');      if(el) el.value=ST.viagem.meta; }
+  if(ST.viagem.date)    { const el=document.getElementById('v-date');      if(el) el.value=ST.viagem.date; }
+  if(ST.viagem.destino) { const el=document.getElementById('v-destino');   if(el) el.value=ST.viagem.destino; }
+  if(ST.lazer.orc)      { const el=document.getElementById('l-orc');       if(el) el.value=ST.lazer.orc; }
+  ST._lastOpen = new Date().toISOString();
+  sv();
+  toast('💖 Olá Fernanda! Dados carregados.','g');
+  buildMonthBar();
+  renderAll();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════════════════════════
+function go(pg){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nt').forEach(t=>t.classList.remove('on'));
+  document.getElementById('pg-'+pg).classList.add('on');
+  const idx={inicio:0,ganhos:1,contas:2,investimento:3,viagem:4,lazer:5,sugestoes:6,backup:7};
+  const tabs = document.querySelectorAll('.nt');
+  if(tabs[idx[pg]]) tabs[idx[pg]].classList.add('on');
+  if(pg==='backup') renderBackup();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MONTH BAR
+// ═══════════════════════════════════════════════════════════════
+function buildMonthBar(){
+  const bar = document.getElementById('month-bar');
+  if(!bar) return;
+  bar.innerHTML='';
+  for(let m=0;m<12;m++){
+    const hasData = totalGanhosMes(m)>0||totalPagoMes(m)>0;
+    const btn = document.createElement('button');
+    btn.className='mc'+(m===CUR_MES?' on':hasData?' has':'');
+    btn.textContent=MESES_S[m];
+    btn.onclick=()=>{ CUR_MES=m; ST.curMes=m; sv(); buildMonthBar(); renderAll(); };
+    bar.appendChild(btn);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER: INÍCIO
+// ═══════════════════════════════════════════════════════════════
+function renderInicio(){
+  const ganhos  = totalGanhosMes(CUR_MES);
+  const contas  = totalMeu();
+  const pago    = totalPagoMes(CUR_MES);
+  const saldo   = ganhos - contas;
+  const mesNome = MESES[CUR_MES];
+
+  const si = document.getElementById('ini-saldo');
+  if(si){ si.textContent=BRL(saldo); si.style.color=saldo>=0?'var(--gold)':'var(--red)'; }
+  const ss = document.getElementById('ini-saldo-sub');
+  if(ss) ss.textContent = ganhos>0?`${BRL(ganhos)} ganhos · ${BRL(contas)} contas`:`Nenhum ganho registrado em ${mesNome}`;
+
+  const kpis = document.getElementById('ini-kpis');
+  if(kpis) kpis.innerHTML=`
+    <div class="kpi ${ganhos>0?'g':''}"><div class="kl">Ganhos (${mesNome})</div><div class="kv">${BRL(ganhos)}</div><div class="ks">${ganhosMes(CUR_MES).length} registros</div></div>
+    <div class="kpi ${contas>0?'r':''}"><div class="kl">Contas (minha parte)</div><div class="kv">${BRL(contas)}</div><div class="ks">total mensal</div></div>
+    <div class="kpi ${pago>0?'b':''}"><div class="kl">Pago em ${mesNome}</div><div class="kv">${BRL(pago)}</div><div class="ks">${PCT(pago,contas)}% das contas</div></div>
+    <div class="kpi gd"><div class="kl">Patrimônio</div><div class="kv">${BRL(ST.inv.atual)}</div><div class="ks">total investido</div></div>`;
+
+  const bars = document.getElementById('ini-bars');
+  if(bars){
+    const pp = PCT(pago,contas);
+    const pg2 = PCT(ganhos>0?contas:0,ganhos);
+    bars.innerHTML=`
+      <div class="ctitle">Progresso de ${mesNome}</div>
+      <div class="pb"><div class="pb-top"><span>Contas pagas</span><span>${BRL(pago)} / ${BRL(contas)}</span></div>
+        <div class="pt" style="height:9px;background:var(--s3)"><div class="pf ${pp>=100?'g':pp>50?'gd':'r'}" style="width:${Math.min(100,pp)}%"></div></div></div>
+      ${ganhos>0?`<div class="pb"><div class="pb-top"><span>Comprometimento da renda</span><span>${pg2}%</span></div>
+        <div class="pt" style="height:9px;background:var(--s3)"><div class="pf ${pg2>80?'r':pg2>60?'gd':'g'}" style="width:${Math.min(100,pg2)}%"></div></div></div>`:''}`;
+  }
+
+  // Alerts
+  const al = document.getElementById('ini-alerts');
+  if(al){
+    const alerts=[];
+    const naopagas = ST.contas.filter(c=>!isQuit(c)&&statusPag(c.id,CUR_MES)==='nao');
+    if(naopagas.length) alerts.push(`<div class="alert gd"><div class="ai">⚠️</div><div><strong>${naopagas.length} conta(s) pendente(s)</strong><p>${naopagas.map(c=>c.n).join(', ')}</p></div></div>`);
+    if(saldo<0) alerts.push(`<div class="alert r"><div class="ai">🔴</div><div><strong>Atenção: despesas superam renda</strong><p>Diferença de ${BRL(Math.abs(saldo))} este mês.</p></div></div>`);
+    if(ST.inv.atual>0&&ST.viagem.meta>0){
+      const falta=ST.viagem.meta-ST.viagem.atual;
+      if(falta>0) alerts.push(`<div class="alert b"><div class="ai">✈️</div><div><strong>Viagem: faltam ${BRL(falta)}</strong><p>${PCT(ST.viagem.atual,ST.viagem.meta)}% da meta para ${ST.viagem.destino||'o destino'}</p></div></div>`);
+    }
+    al.innerHTML=alerts.join('');
+  }
+
+  // Histórico mensal
+  const ht = document.getElementById('ini-hist-table');
+  if(ht){
+    const rows=[];
+    for(let m=0;m<12;m++){
+      const g=totalGanhosMes(m), p2=totalPagoMes(m), c=totalMeu();
+      if(g>0||p2>0) rows.push({m,g,p2,c});
+    }
+    if(rows.length){
+      const dot=(m)=>{ const g=totalGanhosMes(m),c=totalMeu(); return g>=c?'var(--green)':g>0?'var(--gold)':'var(--mu)'; };
+      ht.innerHTML=`<div style="display:grid;gap:0">${rows.map(r=>`
+        <div class="msrow" style="${r.m===CUR_MES?'background:var(--s2)':''}">
+          <div class="ms-dot" style="background:${dot(r.m)}"></div>
+          <div class="ms-m">${MESES_S[r.m]}</div>
+          <div style="font-size:12px;color:var(--green);text-align:right">${BRL(r.g)}</div>
+          <div style="font-size:12px;color:var(--red);text-align:right">${BRL(r.c)}</div>
+          <div style="font-family:var(--fh);font-size:13px;font-weight:800;color:${r.g-r.c>=0?'var(--gold)':'var(--red)'};text-align:right">${BRL(r.g-r.c)}</div>
+        </div>`).join('')}</div>`;
+    } else {
+      ht.innerHTML='<div class="empty"><div class="ei">📊</div><p>Sem dados ainda. Registre ganhos e marque contas como pagas!</p></div>';
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER: GANHOS
+// ═══════════════════════════════════════════════════════════════
+function renderGanhos(){
+  const gList = ganhosMes(CUR_MES);
+  const total = totalGanhosMes(CUR_MES);
+  const lbl = document.getElementById('g-mes-label');
+  if(lbl) lbl.textContent=MESES[CUR_MES]+' '+CY;
+
+  const kpis=document.getElementById('g-kpis');
+  if(kpis) kpis.innerHTML=`
+    <div class="kpi g"><div class="kl">Total recebido</div><div class="kv">${BRL(total)}</div><div class="ks">${gList.length} registros</div></div>
+    <div class="kpi ${total>totalMeu()?'g':'r'}"><div class="kl">Saldo após contas</div><div class="kv">${BRL(total-totalMeu())}</div><div class="ks">ganhos − contas</div></div>`;
+
+  // Tipos
+  const tipos={salario:'💼',aluno:'👤',extra:'⭐',outro:'📦'};
+  const byTipo={};
+  gList.forEach(g=>{ byTipo[g.t]=(byTipo[g.t]||0)+g.v; });
+  const gt=document.getElementById('g-tipos');
+  if(gt){
+    if(Object.keys(byTipo).length){
+      gt.innerHTML=Object.entries(byTipo).sort((a,b)=>b[1]-a[1]).map(([t,v])=>`
+        <div class="list-row">
+          <div style="font-size:22px">${tipos[t]||'📦'}</div>
+          <div class="row-main"><div class="row-title">${{salario:'Salário',aluno:'Alunos',extra:'Extra',outro:'Outros'}[t]||t}</div></div>
+          <div class="row-val pos">${BRL(v)}</div>
+        </div>`).join('');
+    } else gt.innerHTML='<div class="empty"><div class="ei">💵</div><p>Nenhum ganho em '+MESES[CUR_MES]+'</p></div>';
+  }
+
+  const gl=document.getElementById('g-lista');
+  if(gl){
+    if(gList.length){
+      gl.innerHTML=gList.slice().reverse().map(g=>`
+        <div class="list-row">
+          <div class="row-main">
+            <div class="row-title">${g.n}</div>
+            <div class="row-sub">${g.d||''} · ${{salario:'💼',aluno:'👤',extra:'⭐',outro:'📦'}[g.t]||'📦'} ${g.t}</div>
+          </div>
+          <div class="row-val pos">${BRL(g.v)}</div>
+          <button class="del-x" onclick="delGanho(${g.id||0})">✕</button>
+        </div>`).join('');
+    } else gl.innerHTML='<div class="empty"><p>Nenhum registro</p></div>';
+  }
+}
+
+function addGanho(){
+  const n=document.getElementById('gn').value.trim();
+  const v=parseFloat(document.getElementById('gv').value);
+  const t=document.getElementById('gt').value;
+  const d=document.getElementById('gd').value;
+  if(!n||isNaN(v)||v<=0){ toast('Preencha nome e valor','r'); return; }
+  const mes=getMes(CUR_MES);
+  mes.ganhos.push({id:nGid(CUR_MES),n,v,t,d,mk:mesKey(CUR_MES)});
+  document.getElementById('gn').value='';
+  document.getElementById('gv').value='';
+  sv('g'); toast('✅ Ganho registrado!','g'); renderGanhos(); renderInicio(); renderSugestoes();
+}
+
+function delGanho(id){
+  const mes=getMes(CUR_MES);
+  mes.ganhos=mes.ganhos.filter(g=>g.id!==id);
+  sv('g'); renderGanhos(); renderInicio(); renderSugestoes();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER: CONTAS
+// ═══════════════════════════════════════════════════════════════
+function renderContas(){
+  const total=totalMeu();
+  const pago=totalPagoMes(CUR_MES);
+  const pp=PCT(pago,total);
+
+  const kpis=document.getElementById('c-kpis');
+  if(kpis) kpis.innerHTML=`
+    <div class="kpi r"><div class="kl">Total (minha parte)</div><div class="kv">${BRL(total)}</div><div class="ks">mensal</div></div>
+    <div class="kpi ${pp>=100?'g':pp>50?'gd':'r'}"><div class="kl">Pago em ${MESES_S[CUR_MES]}</div><div class="kv">${BRL(pago)}</div><div class="ks">${pp}%</div></div>
+    <div class="kpi b"><div class="kl">Falta pagar</div><div class="kv">${BRL(Math.max(0,total-pago))}</div><div class="ks">${ST.contas.filter(c=>!isQuit(c)&&statusPag(c.id,CUR_MES)==='nao').length} contas</div></div>
+    <div class="kpi p"><div class="kl">Parceladas</div><div class="kv">${ST.contas.filter(c=>c.t==='parcelado'&&!isQuit(c)).length}</div><div class="ks">em aberto</div></div>`;
+
+  const prog=document.getElementById('c-prog');
+  if(prog) prog.innerHTML=`<div class="pt" style="height:8px;background:var(--s3)"><div class="pf ${pp>=100?'g':pp>60?'gd':'r'}" style="width:${Math.min(100,pp)}%"></div></div>`;
+
+  const lista=document.getElementById('c-lista');
+  if(!lista) return;
+  const cats={};
+  ST.contas.forEach(c=>{ (cats[c.cat]=cats[c.cat]||[]).push(c); });
+  const pag=pagamentosMes(CUR_MES);
+
+  let html='';
+  Object.entries(cats).forEach(([cat,cs])=>{
+    html+=`<div class="sec-divider">${cat}</div>`;
+    cs.forEach(c=>{
+      const q=isQuit(c);
+      const pago2=pag[c.id]==='pago'||pag[c.id]==='quitado'||q;
+      const saldo=BRL(meuVal(c));
+      const prog2=c.t==='parcelado'?PCT(c.pg,c.p):0;
+      const hist=(ST.parcHist&&ST.parcHist[c.id])||[];
+
+      let proxInfo='';
+      if(c.t==='parcelado'&&!q){
+        const rest=c.p-c.pg;
+        const saldoTotal=meuVal(c)*rest;
+        proxInfo=`<div style="font-size:10px;color:var(--cyan);margin-top:3px">próx: ${BRL(meuVal(c))} · restante: ${BRL(saldoTotal)}</div>`;
+      }
+      let histHtml='';
+      if(hist.length&&c.t==='parcelado'){
+        histHtml=`<div style="margin-top:4px;display:flex;gap:3px;flex-wrap:wrap">${hist.map(h=>`<span style="font-size:9px;background:var(--green2);color:var(--green);border:1px solid var(--green3);border-radius:4px;padding:1px 5px">${h.parcNum}ª ${h.mes.slice(5)}</span>`).join('')}</div>`;
+      }
+
+      html+=`<div class="conta-row ${q?'done':pago2?'paid':''}">
+        <div style="min-width:0">
+          <input class="ie-name" value="${c.n.replace(/"/g,'&quot;')}" onchange="saveContaN(${c.id},this.value)">
+          <div style="margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            ${c.t==='parcelado'?`<span style="font-size:10px;color:var(--mu)">${c.pg}/${c.p}</span>`:''}
+            ${c.t==='parcelado'?`<div style="display:inline-flex;align-items:center;width:40px;height:3px;background:var(--s3);border-radius:2px;overflow:hidden;vertical-align:middle"><div style="height:100%;background:${prog2>=100?'var(--green)':prog2>50?'var(--gold)':'var(--red)'};width:${prog2}%"></div></div>`:''}
+          </div>
+          ${proxInfo}${histHtml}
+        </div>
+        <div style="text-align:right">
+          <input class="ie" value="${meuVal(c).toFixed(2)}" onchange="saveContaV(${c.id},this.value)" style="color:var(--tx)">
+        </div>
+        <button class="tpill ${q?'tp-done':pago2?'tp-on':'tp-off'}" onclick="${q?'':'togglePag('+c.id+')'}" style="${q?'cursor:default':''}">
+          ${q?'Quitado':pago2?'Pago ✓':'Pendente'}
+        </button>
+        <button class="del-x" onclick="delConta(${c.id})">✕</button>
+      </div>`;
+    });
+  });
+  lista.innerHTML=html;
+}
+
+function saveContaN(id,v){ const c=ST.contas.find(x=>x.id===id); if(c){c.n=v.trim()||c.n; sv('c');} }
+function saveContaV(id,v){ const c=ST.contas.find(x=>x.id===id); if(c&&!isNaN(parseFloat(v))){ c.v=parseFloat(v)*2; sv('c'); renderContas(); renderInicio(); renderSugestoes(); } }
+function delConta(id){ if(!confirm('Remover esta conta?')) return; ST.contas=ST.contas.filter(c=>c.id!==id); sv('c'); renderContas(); renderInicio(); renderSugestoes(); }
+
+function addConta(){
+  const n=document.getElementById('cn').value.trim();
+  const v=parseFloat(document.getElementById('cv').value);
+  const t=document.getElementById('ctp').value;
+  const p=parseInt(document.getElementById('cpa').value)||1;
+  if(!n||isNaN(v)||v<0){ toast('Preencha nome e valor','r'); return; }
+  ST.contas.push({id:nCid(),n,t,cat:'Outros',v,p,pg:0});
+  document.getElementById('cn').value=''; document.getElementById('cv').value=''; document.getElementById('cpa').value='1';
+  sv('c'); toast('✅ Conta adicionada!','g'); renderContas(); renderInicio(); renderSugestoes();
+}
+
+function togglePag(cId){
+  const c=ST.contas.find(x=>x.id===cId);
+  if(!c||isQuit(c)) return;
+  const mes=getMes(CUR_MES);
+  const cur=mes.pagamentos[cId]||'nao';
+  if(cur==='nao'){
+    mes.pagamentos[cId]='pago';
+    if(c.t==='parcelado'){
+      c.pg=Math.min(c.pg+1,c.p);
+      if(!ST.parcHist) ST.parcHist={};
+      if(!ST.parcHist[cId]) ST.parcHist[cId]=[];
+      ST.parcHist[cId].push({mes:mesKey(CUR_MES),parcNum:c.pg,valor:meuVal(c),data:new Date().toLocaleDateString('pt-BR')});
+      if(c.pg>=c.p){ mes.pagamentos[cId]='quitado'; toast('🎉 '+c.n+' QUITADO!','g'); }
+      else { const r=c.p-c.pg; toast('✅ Parcela '+c.pg+'/'+c.p+' de '+c.n+' · faltam '+r+'x = '+BRL(meuVal(c)*r),'g'); }
+    } else { toast('✅ '+c.n+' pago!','g'); }
+  } else {
+    mes.pagamentos[cId]='nao';
+    if(c.t==='parcelado'&&c.pg>0){
+      c.pg--;
+      if(ST.parcHist&&ST.parcHist[cId]){
+        const idx=ST.parcHist[cId].findLastIndex(h=>h.mes===mesKey(CUR_MES));
+        if(idx>=0) ST.parcHist[cId].splice(idx,1);
+      }
+    }
+    toast('↩ '+c.n+' desmarcado','');
+  }
+  sv('c'); renderContas(); renderInicio(); renderSugestoes();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER: INVESTIMENTOS
+// ═══════════════════════════════════════════════════════════════
+function renderInv(){
+  const {atual,meta,mensal,cats,hist}=ST.inv;
+  const pp=PCT(atual,meta);
+  const mesesRest=mensal>0?Math.ceil(Math.max(0,meta-atual)/mensal):0;
+
+  const kpis=document.getElementById('inv-kpis');
+  if(kpis) kpis.innerHTML=`
+    <div class="kpi b"><div class="kl">Total investido</div><div class="kv">${BRL(atual)}</div><div class="ks">${pp}% da meta</div></div>
+    <div class="kpi gd"><div class="kl">Meta</div><div class="kv">${BRL(meta)}</div><div class="ks">patrimônio alvo</div></div>
+    <div class="kpi g"><div class="kl">Aporte mensal</div><div class="kv">${BRL(mensal)}</div><div class="ks">previsto</div></div>
+    <div class="kpi p"><div class="kl">Falta</div><div class="kv">${BRL(Math.max(0,meta-atual))}</div><div class="ks">${mesesRest>0?mesesRest+' meses':'meta atingida!'}</div></div>`;
+
+  const ia=document.getElementById('inv-atual'); if(ia) ia.textContent=BRL(atual);
+  const im=document.getElementById('inv-meta-txt'); if(im) im.textContent='meta: '+BRL(meta);
+  const ip=document.getElementById('inv-pct'); if(ip) ip.textContent=pp+'%';
+  const ib=document.getElementById('inv-bar'); if(ib) ib.style.width=Math.min(100,pp)+'%';
+
+  const ic=document.getElementById('inv-cats');
+  if(ic){
+    if(cats&&cats.length){
+      ic.innerHTML=cats.map(c=>`
+        <div class="list-row">
+          <div class="row-main"><div class="row-title">${c.n}</div><div class="row-sub">${PCT(c.v,atual)}% do total</div></div>
+          <div class="row-val gd">${BRL(c.v)}</div>
+          <button class="del-x" onclick="delInvCat('${c.n}')">✕</button>
+        </div>`).join('');
+    } else ic.innerHTML='<div class="empty"><p>Adicione onde está investido</p></div>';
+  }
+
+  const ih=document.getElementById('inv-hist');
+  if(ih){
+    if(hist&&hist.length){
+      ih.innerHTML=hist.slice().reverse().map(h=>`
+        <div class="list-row">
+          <div class="row-main"><div class="row-title">${h.desc||'Aporte'}</div><div class="row-sub">${h.d}</div></div>
+          <div class="row-val pos">+${BRL(h.v)}</div>
+        </div>`).join('');
+    } else ih.innerHTML='<div class="empty"><p>Nenhum aporte registrado</p></div>';
+  }
+
+  const ev=document.getElementById('inv-evolucao');
+  if(ev){
+    const byM=ST.inv.byMes||{};
+    const entries=Object.entries(byM).sort();
+    if(entries.length){
+      const max=Math.max(...entries.map(e=>e[1]))||1;
+      ev.innerHTML=`<div style="display:flex;align-items:flex-end;gap:5px;height:80px;padding-bottom:4px">${entries.map(([k,v])=>`
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0">
+          <div style="flex:1;width:100%;background:var(--blue2);border-radius:5px 5px 0 0;border:1px solid var(--blue3);height:${Math.round(v/max*100)}%;min-height:4px"></div>
+          <div style="font-size:9px;color:var(--mu);white-space:nowrap">${k.slice(5)}</div>
+        </div>`).join('')}</div>`;
+    } else ev.innerHTML='<div class="empty"><p>Nenhum aporte registrado</p></div>';
+  }
+}
+
+function saveInv(){
+  ST.inv.meta   = parseFloat(document.getElementById('inv-meta')?.value)||ST.inv.meta;
+  ST.inv.mensal = parseFloat(document.getElementById('inv-mensal')?.value)||ST.inv.mensal;
+  sv('inv'); renderInv(); renderSugestoes();
+}
+
+function aportarInv(){
+  const el=document.getElementById('inv-aportar');
+  const v=parseFloat(el?.value);
+  if(isNaN(v)||v<=0){ toast('Informe o valor do aporte','r'); return; }
+  ST.inv.atual=(ST.inv.atual||0)+v;
+  if(!ST.inv.hist) ST.inv.hist=[];
+  if(!ST.inv.byMes) ST.inv.byMes={};
+  const mk=mesKey(CUR_MES);
+  ST.inv.hist.push({v,d:new Date().toLocaleDateString('pt-BR'),mk,desc:'Aporte'});
+  ST.inv.byMes[mk]=(ST.inv.byMes[mk]||0)+v;
+  if(el) el.value='';
+  sv('inv'); toast('📈 Aporte de '+BRL(v)+' registrado!','g'); renderInv(); renderInicio(); renderSugestoes();
+}
+
+function addInvCat(){
+  const n=document.getElementById('invc-n').value.trim();
+  const v=parseFloat(document.getElementById('invc-v').value);
+  if(!n||isNaN(v)||v<0){ toast('Preencha nome e valor','r'); return; }
+  if(!ST.inv.cats) ST.inv.cats=[];
+  const ex=ST.inv.cats.find(c=>c.n===n);
+  if(ex) ex.v=v; else ST.inv.cats.push({n,v});
+  document.getElementById('invc-n').value=''; document.getElementById('invc-v').value='';
+  sv('inv'); renderInv();
+}
+
+function delInvCat(n){ ST.inv.cats=ST.inv.cats.filter(c=>c.n!==n); sv('inv'); renderInv(); }
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER: VIAGEM
+// ═══════════════════════════════════════════════════════════════
+function renderViagem(){
+  const {atual,meta,destino,date,itens,hist}=ST.viagem;
+  const pp=PCT(atual,meta);
+  const falta=Math.max(0,meta-atual);
+  let mesesRest=0;
+  if(date){ const [y,m]=date.split('-'); mesesRest=Math.max(0,((parseInt(y)-CY)*12)+(parseInt(m)-1-CM)); }
+
+  const kpis=document.getElementById('v-kpis');
+  if(kpis) kpis.innerHTML=`
+    <div class="kpi c"><div class="kl">Guardado</div><div class="kv">${BRL(atual)}</div><div class="ks">${pp}% da meta</div></div>
+    <div class="kpi gd"><div class="kl">Meta</div><div class="kv">${BRL(meta)}</div><div class="ks">${destino||'a definir'}</div></div>
+    <div class="kpi ${falta<=0?'g':'b'}"><div class="kl">Falta</div><div class="kv">${BRL(falta)}</div><div class="ks">${mesesRest>0?mesesRest+' meses':'—'}</div></div>
+    <div class="kpi p"><div class="kl">Guardar/mês</div><div class="kv">${mesesRest>0?BRL(falta/mesesRest):'—'}</div><div class="ks">para o prazo</div></div>`;
+
+  const va=document.getElementById('v-atual'); if(va) va.textContent=BRL(atual);
+  const vm=document.getElementById('v-meta-txt'); if(vm) vm.textContent='meta: '+BRL(meta);
+  const vp=document.getElementById('v-pct'); if(vp) vp.textContent=pp+'%';
+  const vb=document.getElementById('v-bar'); if(vb) vb.style.width=Math.min(100,pp)+'%';
+  const vt=document.getElementById('v-prazo-txt');
+  if(vt) vt.textContent=date?`Prazo: ${date.slice(0,7)} · ${mesesRest} meses restantes`:'Configure a meta e o prazo';
+
+  const vi=document.getElementById('v-itens');
+  if(vi){
+    const its=itens||[];
+    if(its.length){
+      vi.innerHTML=its.map(i=>`
+        <div class="list-row">
+          <div class="row-main"><div class="row-title">${i.n}</div></div>
+          <div class="row-val gd">${BRL(i.v)}</div>
+          <button class="del-x" onclick="delVItem('${i.n}')">✕</button>
+        </div>`).join('');
+    } else vi.innerHTML='<div class="empty"><p>Adicione itens da viagem</p></div>';
+  }
+
+  const vh=document.getElementById('v-hist');
+  if(vh){
+    const hs=hist||[];
+    if(hs.length){
+      vh.innerHTML=hs.slice().reverse().map(h=>`
+        <div class="list-row">
+          <div class="row-main"><div class="row-title">${h.desc||'Depósito'}</div><div class="row-sub">${h.d}</div></div>
+          <div class="row-val pos">+${BRL(h.v)}</div>
+        </div>`).join('');
+    } else vh.innerHTML='<div class="empty"><p>Nenhum depósito registrado</p></div>';
+  }
+}
+
+function saveViagem(){
+  ST.viagem.meta    = parseFloat(document.getElementById('v-meta')?.value)||ST.viagem.meta;
+  ST.viagem.date    = document.getElementById('v-date')?.value||ST.viagem.date;
+  ST.viagem.destino = document.getElementById('v-destino')?.value||ST.viagem.destino;
+  sv('v'); renderViagem(); renderSugestoes();
+}
+
+function aportarViagem(){
+  const el=document.getElementById('v-aportar');
+  const v=parseFloat(el?.value);
+  if(isNaN(v)||v<=0){ toast('Informe o valor','r'); return; }
+  ST.viagem.atual=(ST.viagem.atual||0)+v;
+  if(!ST.viagem.hist) ST.viagem.hist=[];
+  ST.viagem.hist.push({v,d:new Date().toLocaleDateString('pt-BR'),desc:'Depósito'});
+  if(el) el.value='';
+  sv('v'); toast('✈️ '+BRL(v)+' guardado para a viagem!','g'); renderViagem(); renderSugestoes();
+}
+
+function addVItem(){
+  const n=document.getElementById('vi-n').value.trim();
+  const v=parseFloat(document.getElementById('vi-v').value);
+  if(!n||isNaN(v)||v<0){ toast('Preencha nome e valor','r'); return; }
+  if(!ST.viagem.itens) ST.viagem.itens=[];
+  ST.viagem.itens.push({n,v});
+  document.getElementById('vi-n').value=''; document.getElementById('vi-v').value='';
+  sv('v'); renderViagem();
+}
+
+function delVItem(n){ ST.viagem.itens=ST.viagem.itens.filter(i=>i.n!==n); sv('v'); renderViagem(); }
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER: LAZER
+// ═══════════════════════════════════════════════════════════════
+function renderLazer(){
+  const gastos=ST.lazer.gastos.filter(g=>g.mk===mesKey(CUR_MES));
+  const total=gastos.reduce((s,g)=>s+g.v,0);
+  const orc=ST.lazer.orc||0;
+  const pp=PCT(total,orc);
+  const lbl=document.getElementById('l-mes-label'); if(lbl) lbl.textContent=MESES[CUR_MES]+' '+CY;
+
+  const kpis=document.getElementById('l-kpis');
+  if(kpis) kpis.innerHTML=`
+    <div class="kpi ${pp>100?'r':pp>75?'gd':'g'}"><div class="kl">Gasto em lazer</div><div class="kv">${BRL(total)}</div><div class="ks">${pp}% do orçamento</div></div>
+    <div class="kpi b"><div class="kl">Orçamento</div><div class="kv">${BRL(orc)}</div><div class="ks">definido</div></div>
+    <div class="kpi ${orc-total>=0?'g':'r'}"><div class="kl">Disponível</div><div class="kv">${BRL(orc-total)}</div><div class="ks">restante</div></div>`;
+
+  const prog=document.getElementById('l-prog');
+  if(prog) prog.innerHTML=`<div class="pt" style="height:8px;background:var(--s3)"><div class="pf ${pp>100?'r':pp>75?'gd':'g'}" style="width:${Math.min(100,pp)}%"></div></div>`;
+
+  const gl=document.getElementById('l-lista');
+  if(gl){
+    if(gastos.length){
+      gl.innerHTML=gastos.slice().reverse().map(g=>`
+        <div class="list-row">
+          <div class="row-main"><div class="row-title">${g.n}</div><div class="row-sub">${g.d||''}</div></div>
+          <div class="row-val neg">${BRL(g.v)}</div>
+          <button class="del-x" onclick="delLazer(${g.id})">✕</button>
+        </div>`).join('');
+    } else gl.innerHTML='<div class="empty"><div class="ei">🎉</div><p>Nenhum gasto em '+MESES[CUR_MES]+'</p></div>';
+  }
+
+  const hm=document.getElementById('l-hist-mensal');
+  if(hm){
+    const byM={};
+    ST.lazer.gastos.forEach(g=>{ byM[g.mk]=(byM[g.mk]||0)+g.v; });
+    const entries=Object.entries(byM).sort();
+    hm.innerHTML=entries.map(([k,v])=>`
+      <div class="list-row">
+        <div class="row-main"><div class="row-title">${k}</div></div>
+        <div class="row-val ${v<=orc?'pos':'neg'}">${BRL(v)}</div>
+      </div>`).join('')||'<div class="empty"><p>Sem histórico</p></div>';
+  }
+}
+
+function saveLazer(){
+  ST.lazer.orc=parseFloat(document.getElementById('l-orc')?.value)||ST.lazer.orc;
+  sv('l'); renderLazer();
+}
+
+function addLazer(){
+  const n=document.getElementById('ln').value.trim();
+  const v=parseFloat(document.getElementById('lv').value);
+  const d=document.getElementById('ldt')?.value||'';
+  if(!n||isNaN(v)||v<=0){ toast('Preencha nome e valor','r'); return; }
+  const id=Math.max(0,...ST.lazer.gastos.map(g=>g.id||0))+1;
+  ST.lazer.gastos.push({id,n,v,d,mk:mesKey(CUR_MES)});
+  if(!ST.lazer.byMes) ST.lazer.byMes={};
+  ST.lazer.byMes[mesKey(CUR_MES)]=(ST.lazer.byMes[mesKey(CUR_MES)]||0)+v;
+  document.getElementById('ln').value=''; document.getElementById('lv').value='';
+  sv('l'); toast('🎉 Gasto registrado!','g'); renderLazer();
+}
+
+function delLazer(id){
+  const g=ST.lazer.gastos.find(x=>x.id===id);
+  if(g&&ST.lazer.byMes) ST.lazer.byMes[g.mk]=Math.max(0,(ST.lazer.byMes[g.mk]||0)-g.v);
+  ST.lazer.gastos=ST.lazer.gastos.filter(x=>x.id!==id);
+  sv('l'); renderLazer();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER: SUGESTÕES
+// ═══════════════════════════════════════════════════════════════
+let SUG_PERFIL = ST.sugPerfil||'moderado';
+function setSugPerfil(p){ SUG_PERFIL=p; ST.sugPerfil=p; sv(); renderSugestoes(); }
+
+function pizzaSlices(slices,r,cx,cy){
+  let ang=-Math.PI/2,paths='';
+  slices.forEach(s=>{
+    const a=(s.p/100)*Math.PI*2;
+    const x1=cx+r*Math.cos(ang),y1=cy+r*Math.sin(ang);
+    ang+=a;
+    const x2=cx+r*Math.cos(ang),y2=cy+r*Math.sin(ang);
+    const large=a>Math.PI?1:0;
+    paths+=`<path d="M${cx},${cy} L${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large},1 ${x2.toFixed(1)},${y2.toFixed(1)} Z" fill="${s.c}" opacity=".85"/>`;
+  });
+  return paths;
+}
+
+function renderSugestoes(){
+  const sobraInput=parseFloat(document.getElementById('sug-sobra')?.value)||0;
+  const rendaInput=parseFloat(document.getElementById('sug-renda')?.value)||0;
+  const contasMeu=totalMeu();
+  const ganhos=totalGanhosMes(CUR_MES)||rendaInput;
+  const sobra=sobraInput||Math.max(0,ganhos-contasMeu);
+  const renda=rendaInput||ganhos;
+  const invAtual=ST.inv.atual||0;
+  const re3=contasMeu*3,re6=contasMeu*6;
+  const dividas=ST.contas.filter(c=>c.t==='parcelado'&&!isQuit(c));
+  const totalDivMeu=dividas.reduce((s,c)=>s+meuSaldo(c),0);
+
+  // Score
+  let score=0;const itens=[];
+  if(ganhos>0){score+=15;itens.push({ok:true,txt:'Ganhos registrados este mês'});}
+  else itens.push({ok:false,txt:'Nenhum ganho registrado este mês'});
+  if(ganhos>=contasMeu){score+=20;itens.push({ok:true,txt:'Renda cobre todas as contas'});}
+  else itens.push({ok:false,txt:'Renda não cobre as contas fixas'});
+  if(invAtual>=re3){score+=20;itens.push({ok:true,txt:'Reserva de emergência formada ✓'});}
+  else if(invAtual>0){score+=8;itens.push({ok:'parcial',txt:'Reserva em formação ('+PCT(invAtual,re3)+'% da meta mínima)'});}
+  else itens.push({ok:false,txt:'Sem reserva de emergência'});
+  if(dividas.length===0){score+=20;itens.push({ok:true,txt:'Sem dívidas parceladas em aberto'});}
+  else if(totalDivMeu<contasMeu*3){score+=8;itens.push({ok:'parcial',txt:dividas.length+' dívida(s) em aberto — '+BRL(totalDivMeu)});}
+  else itens.push({ok:false,txt:'Dívidas altas: '+BRL(totalDivMeu)+' em aberto'});
+  if(ST.inv.hist&&ST.inv.hist.length>0){score+=15;itens.push({ok:true,txt:'Investindo regularmente ✓'});}
+  else itens.push({ok:false,txt:'Sem histórico de investimentos'});
+  if(ST.viagem.meta>0&&ST.viagem.atual>0){score+=10;itens.push({ok:true,txt:'Poupando para viagem ✓'});}
+  score=Math.min(100,score);
+  const sColor=score>=75?'#1ed760':score>=50?'#ff6b9d':'#ff3b5c';
+  const sLabel=score>=80?'Excelente 🏆':score>=65?'Muito Bom 👍':score>=50?'Em Evolução 📈':score>=30?'Atenção ⚠️':'Crítico 🚨';
+  const sDesc=score>=80?'Parabéns! Sua vida financeira está muito bem organizada.':score>=50?'No caminho certo. Foque nos pontos vermelhos para evoluir.':'Há pontos urgentes. Siga as sugestões abaixo por prioridade.';
+  const arc=document.getElementById('sug-arc');
+  if(arc){const p=188.5;arc.style.strokeDashoffset=(p-p*score/100).toFixed(1);arc.style.stroke=sColor;}
+  const sn=document.getElementById('sug-score-num');if(sn){sn.textContent=score;sn.setAttribute('fill',sColor);}
+  const sl=document.getElementById('sug-score-label');if(sl){sl.textContent=sLabel;sl.style.color=sColor;}
+  const sd=document.getElementById('sug-score-desc');if(sd)sd.textContent=sDesc;
+  const si=document.getElementById('sug-score-itens');
+  if(si)si.innerHTML=itens.map(i=>`<div style="display:flex;align-items:center;gap:7px;font-size:12px;color:${i.ok===true?'var(--green)':i.ok==='parcial'?'var(--gold)':'var(--mu)'}"><span>${i.ok===true?'✅':i.ok==='parcial'?'🟡':'🔴'}</span>${i.txt}</div>`).join('');
+
+  // Calculadora
+  const cr=document.getElementById('sug-calc-result'),ce=document.getElementById('sug-calc-empty');
+  if(sobra>0||renda>0){
+    if(cr)cr.style.display='block';if(ce)ce.style.display='none';
+    const temDiv=dividas.length>0;
+    const slices=temDiv
+      ?[{n:'🛡️ Reserva',p:25,c:'#ff3b5c'},{n:'💳 Dívidas',p:25,c:'#b48fff'},{n:'📈 Investir',p:30,c:'#4f9fff'},{n:'✈️ Viagem',p:15,c:'#00d4aa'},{n:'🎉 Lazer',p:5,c:'#ff6b9d'}]
+      :[{n:'🛡️ Reserva',p:30,c:'#ff3b5c'},{n:'📈 Investir',p:40,c:'#4f9fff'},{n:'✈️ Viagem',p:20,c:'#00d4aa'},{n:'🎉 Lazer',p:10,c:'#ff6b9d'}];
+    const piz=document.getElementById('sug-pizza');
+    if(piz){
+      let h=pizzaSlices(slices,48,55,55);
+      h+=`<circle cx="55" cy="55" r="22" fill="#060810"/>`;
+      const vStr=BRL(sobra).replace('R$ ','').replace(/,\d+$/,'');
+      h+=`<text x="55" y="52" text-anchor="middle" font-family="Bricolage Grotesque" font-size="9" fill="#4a5d80">sobra</text>`;
+      h+=`<text x="55" y="63" text-anchor="middle" font-family="Bricolage Grotesque" font-size="11" font-weight="800" fill="#dde4f0">${vStr}</text>`;
+      piz.innerHTML=h;
+    }
+    const leg=document.getElementById('sug-pizza-leg');
+    if(leg)leg.innerHTML=slices.map(s=>`<div style="display:flex;align-items:center;gap:6px"><div style="width:9px;height:9px;border-radius:2px;background:${s.c};flex-shrink:0"></div><span style="font-size:11px;flex:1">${s.n}</span><span style="font-family:var(--fh);font-weight:800;font-size:11px;color:${s.c}">${s.p}%</span><span style="font-size:11px;color:var(--mu);min-width:56px;text-align:right">${BRL(sobra*s.p/100)}</span></div>`).join('');
+    const dist=document.getElementById('sug-dist');
+    if(dist)dist.innerHTML=slices.map(s=>`<div style="background:var(--s2);border-radius:10px;padding:11px 13px;border-left:3px solid ${s.c}"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><span style="font-size:13px;font-weight:700">${s.n} <span style="color:var(--mu);font-weight:500;font-size:11px">(${s.p}%)</span></span><span style="font-family:var(--fh);font-weight:800;font-size:15px;color:${s.c}">${BRL(sobra*s.p/100)}</span></div><div class="pt" style="height:4px;background:var(--s3)"><div style="height:100%;width:${s.p}%;background:${s.c};border-radius:4px"></div></div></div>`).join('');
+    const obs=document.getElementById('sug-obs');
+    if(obs)obs.textContent=temDiv?`Você ainda tem ${dividas.length} dívida(s) em aberto (${BRL(totalDivMeu)}). Por isso, 25% vai para acelerar o pagamento. Após quitar todas, esse valor vai direto para investimentos.`:`Sem dívidas! 40% vai direto para investimentos — excelente posição.`;
+  } else {
+    if(cr)cr.style.display='none';if(ce)ce.style.display='block';
+  }
+
+  // Reserva
+  const reK=document.getElementById('sug-re-kpis');
+  if(reK)reK.innerHTML=`<div class="kpi r"><div class="kl">Meta mínima (3×)</div><div class="kv">${BRL(re3)}</div><div class="ks">3 meses de contas</div></div><div class="kpi r"><div class="kl">Meta ideal (6×)</div><div class="kv">${BRL(re6)}</div><div class="ks">6 meses de contas</div></div>`;
+  const reP=document.getElementById('sug-re-prog');
+  if(reP){
+    const p3=PCT(invAtual,re3);
+    reP.innerHTML=`<div style="background:var(--s2);border-radius:12px;padding:13px"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--mu);margin-bottom:5px"><span>Investido hoje: <strong style="color:var(--tx)">${BRL(invAtual)}</strong></span><span style="color:${invAtual>=re3?'var(--green)':'var(--red)'}">${p3}% da meta mínima</span></div><div class="pt" style="height:8px;background:var(--s3)"><div class="pf ${p3>=100?'g':'r'}" style="width:${Math.min(100,p3)}%"></div></div><div style="font-size:11px;color:var(--mu);margin-top:6px">${invAtual>=re3?'<span style="color:var(--green)">✅ Reserva mínima atingida! Meta ideal: faltam '+BRL(Math.max(0,re6-invAtual))+'</span>':'Faltam <strong style="color:var(--tx)">'+BRL(re3-invAtual)+'</strong> para a reserva mínima'+(sobra>0?' · ~'+Math.ceil((re3-invAtual)/(sobra*0.3))+' meses':'')}</div></div>`;
+  }
+
+  // Viagem
+  const vc=document.getElementById('sug-viagem-calc');
+  if(vc){
+    const {atual:vAt,meta:vM,destino,date}=ST.viagem;
+    const flt=Math.max(0,vM-vAt);
+    if(vM>0&&date){
+      const [y,m]=date.split('-');
+      const mFlt=Math.max(1,((parseInt(y)-CY)*12)+(parseInt(m)-1-CM));
+      const pMes=flt/mFlt;
+      const pp2=PCT(vAt,vM);
+      vc.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
+        <div class="kpi c"><div class="kl">Guardado</div><div class="kv">${BRL(vAt)}</div><div class="ks">${pp2}% da meta</div></div>
+        <div class="kpi b"><div class="kl">Falta</div><div class="kv">${BRL(flt)}</div><div class="ks">${mFlt} meses</div></div>
+        <div class="kpi ${sobra>0&&sobra*0.15>=pMes?'g':'gd'}"><div class="kl">Guardar/mês</div><div class="kv">${BRL(pMes)}</div><div class="ks">${destino||'destino'}</div></div>
+      </div>
+      <div class="pt" style="height:6px;background:var(--s3);margin-bottom:10px"><div class="pf c" style="width:${pp2}%"></div></div>
+      <div class="alert ${sobra===0?'b':sobra*0.15>=pMes?'g':'r'}"><div class="ai">${sobra===0?'💡':sobra*0.15>=pMes?'✅':'⚠️'}</div><div><strong>${sobra===0?'Configure a sobra acima':sobra*0.15>=pMes?'No caminho certo!':'Precisará de um esforço extra'}</strong><p>${sobra===0?'Informe quanto consegue guardar por mês.':sobra*0.15>=pMes?'Com '+BRL(pMes)+'/mês você chega em '+destino+' no prazo!':'Para o prazo você precisaria de '+BRL(pMes)+'/mês. Considere estender o prazo.'}</p></div></div>`;
+    } else if(vM>0&&flt<=0){
+      vc.innerHTML=`<div class="alert g"><div class="ai">🎉</div><div><strong>Meta atingida!</strong><p>Hora de comprar as passagens para ${destino||'a viagem'}!</p></div></div>`;
+    } else {
+      vc.innerHTML=`<div style="font-size:12px;color:var(--mu);padding:6px 0">Configure a meta de viagem na aba ✈️ para ver o planejamento aqui.</div>`;
+    }
+  }
+
+  // Pirâmide
+  const pir=document.getElementById('sug-piramide');
+  if(pir){
+    const niveis=[
+      {num:'4',n:'Especulação',desc:'Cripto, small caps — só com excedente real',c:'#b48fff',pct:10,ok:invAtual>re6&&dividas.length===0},
+      {num:'3',n:'Renda Variável',desc:'FIIs, ETFs, ações sólidas — crescimento',c:'#4f9fff',pct:20,ok:invAtual>re3&&dividas.length===0},
+      {num:'2',n:'Renda Fixa',desc:'Tesouro IPCA+, CDB 110%+ CDI, LCI/LCA',c:'#f5c842',pct:40,ok:invAtual>re3},
+      {num:'1',n:'Reserva de Emergência',desc:'3-6 meses em Tesouro Selic/CDB liquidez diária',c:'#ff3b5c',pct:30,ok:invAtual>=re3},
+    ];
+    pir.innerHTML=niveis.map((n,i)=>{
+      const w=[54,68,84,100][i];
+      return `<div style="margin:0 auto;width:${w}%;background:${n.ok?'rgba(255,255,255,.04)':'rgba(255,255,255,.02)'};border:1px solid ${n.ok?n.c+'55':'rgba(255,255,255,.07)'};border-radius:10px;padding:10px 13px"><div style="display:flex;align-items:center;gap:10px"><div style="width:22px;height:22px;border-radius:7px;background:${n.c}22;border:1px solid ${n.c}44;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:${n.c};flex-shrink:0">${n.num}</div><div style="flex:1"><div style="font-size:12px;font-weight:700;color:${n.ok?'var(--tx)':'var(--mu)'}">${n.n}${n.ok?' ✅':''}</div><div style="font-size:11px;color:var(--mu);margin-top:1px">${n.desc}</div></div><div style="font-family:var(--fh);font-weight:800;font-size:13px;color:${n.c}">${n.pct}%</div></div></div>`;
+    }).join('');
+  }
+
+  // Perfis
+  ['conservador','moderado','arrojado'].forEach(p=>{
+    const el=document.getElementById('sug-tab-'+p);if(!el)return;
+    const on=p===SUG_PERFIL;
+    const cols={conservador:['var(--green2)','var(--green3)','var(--green)'],moderado:['var(--gold2)','var(--gold3)','var(--gold)'],arrojado:['var(--purple2)','var(--purple3)','var(--purple)']};
+    el.style.background=on?cols[p][0]:'var(--s2)';el.style.border='1px solid '+(on?cols[p][1]:'rgba(255,255,255,.06)');el.style.color=on?cols[p][2]:'var(--mu)';
+  });
+  const op=document.getElementById('sug-opcoes');
+  if(op){
+    const perfis={
+      conservador:{cor:'var(--green)',label:'Conservador — segurança acima de tudo',itens:[{n:'Tesouro Selic',d:'Segurança máxima · resgate D+1 · ~13% a.a.',est:'Até 60%'},{n:'CDB Liquidez Diária 100% CDI',d:'Nubank, Inter, PicPay · resgate no mesmo dia',est:'Até 30%'},{n:'LCI / LCA',d:'Isento de IR · prazo 90-360 dias',est:'Até 10%'}]},
+      moderado:{cor:'var(--gold)',label:'Moderado — equilíbrio entre segurança e crescimento',itens:[{n:'Tesouro IPCA+ 2035',d:'Renda fixa + inflação · ideal para aposentadoria',est:'30%'},{n:'CDB 110–120% CDI',d:'Banco pequeno com FGC garantido até R$ 250k',est:'25%'},{n:'Fundos Imobiliários (FIIs)',d:'HGLG11, KNRI11 · renda mensal isenta de IR',est:'25%'},{n:'ETF BOVA11 ou IVVB11',d:'Diversificação em ações com baixo custo',est:'20%'}]},
+      arrojado:{cor:'var(--purple)',label:'Arrojado — maximizar crescimento no longo prazo',itens:[{n:'Ações BR — Blue chips',d:'VALE3, ITUB4, WEGE3 · empresas sólidas',est:'30%'},{n:'ETF S&P 500 (IVVB11)',d:'500 maiores empresas dos EUA em 1 ativo',est:'25%'},{n:'FIIs de papel + tijolo',d:'MXRF11, HGLG11 · renda passiva mensal',est:'25%'},{n:'BDRs de techs americanas',d:'Apple, Microsoft, Amazon via B3',est:'15%'},{n:'Cripto (Bitcoin/ETH)',d:'Alta volatilidade · só com excedente',est:'5%'}]},
+    };
+    const pf=perfis[SUG_PERFIL];
+    op.innerHTML=`<div style="font-size:11px;color:var(--mu);margin-bottom:10px">${pf.label}</div><div style="display:grid;gap:6px">${pf.itens.map(i=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--s2);border-radius:10px;border:1px solid var(--bdr)"><div style="width:3px;height:36px;border-radius:2px;background:${pf.cor};flex-shrink:0"></div><div style="flex:1"><div style="font-size:13px;font-weight:700">${i.n}</div><div style="font-size:11px;color:var(--mu);margin-top:2px">${i.d}</div></div><div style="background:${pf.cor}22;border:1px solid ${pf.cor}44;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;color:${pf.cor};white-space:nowrap">${i.est}</div></div>`).join('')}</div>${sobra>0?`<div style="margin-top:8px;padding:10px 12px;background:var(--s2);border-radius:10px;font-size:12px;color:var(--mu)">💡 Com ${BRL(sobra)}/mês de sobra, você poderia aportar aprox. <strong style="color:${pf.cor}">${BRL(sobra*0.4)}</strong>/mês em investimentos.</div>`:''}`;
+  }
+
+  // Dívidas
+  const divEl=document.getElementById('sug-dividas');
+  if(divEl){
+    if(dividas.length){
+      const ord=[...dividas].sort((a,b)=>meuSaldo(a)-meuSaldo(b));
+      const extra=sobra>0?sobra*0.25:0;
+      divEl.innerHTML=`<div style="font-size:12px;color:var(--mu);margin-bottom:12px;line-height:1.6">Você tem <strong style="color:var(--tx)">${dividas.length} dívida(s)</strong> em aberto — total sua: <strong style="color:var(--red)">${BRL(totalDivMeu)}</strong>.${extra>0?' Com '+BRL(extra)+'/mês extra você acelera.':''}</div>
+      <div style="display:grid;gap:6px;margin-bottom:14px">${ord.map((c,i)=>{
+        const rest=c.p-c.pg,sld=meuSaldo(c),pv=meuVal(c);
+        const isFirst=i===0;
+        const mExt=extra>0?Math.ceil(sld/(pv+extra/ord.length)):rest;
+        return `<div style="padding:12px;background:${isFirst?'rgba(180,143,255,.08)':'var(--s2)'};border-radius:10px;border:1px solid ${isFirst?'var(--purple3)':'var(--bdr)'}"><div style="display:flex;align-items:center;gap:8px;margin-bottom:7px"><div style="width:22px;height:22px;border-radius:7px;background:${isFirst?'var(--purple2)':'var(--s3)'};color:${isFirst?'var(--purple)':'var(--mu)'};border:1px solid ${isFirst?'var(--purple3)':'var(--bdr)'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0">${i+1}</div><div style="flex:1"><div style="font-size:13px;font-weight:700">${c.n}${isFirst?' <span style="font-size:10px;color:var(--purple)">← PAGUE PRIMEIRO</span>':''}</div><div style="font-size:11px;color:var(--mu)">${rest}× de ${BRL(pv)} restantes</div></div><div style="font-family:var(--fh);font-weight:800;font-size:15px;color:var(--red)">${BRL(sld)}</div></div><div class="pt" style="height:5px;background:var(--s3)"><div style="height:100%;width:${PCT(c.pg,c.p)}%;background:${isFirst?'var(--purple)':'var(--mu2)'};border-radius:4px"></div></div><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mu);margin-top:4px"><span>${c.pg}/${c.p} parcelas pagas</span>${extra>0?`<span style="color:var(--cyan)">Com esforço extra: ~${mExt} meses</span>`:`<span>${rest} meses no ritmo atual</span>`}</div></div>`;
+      }).join('')}</div>
+      <div style="background:var(--s2);border-radius:10px;padding:12px;border:1px solid var(--bdr)"><div style="font-size:12px;font-weight:700;margin-bottom:7px">🎯 Método Bola de Neve</div><div style="display:grid;gap:4px;font-size:12px;color:var(--mu)"><div><strong style="color:var(--tx)">1.</strong> Pague o mínimo em todas as dívidas</div><div><strong style="color:var(--tx)">2.</strong> Todo extra vai para <strong style="color:var(--purple)">${ord[0].n}</strong> (menor saldo)</div><div><strong style="color:var(--tx)">3.</strong> Ao quitar, some o valor liberado na próxima</div><div><strong style="color:var(--tx)">4.</strong> A bola de neve cresce a cada quitação!</div></div></div>`;
+    } else {
+      divEl.innerHTML=`<div class="alert g"><div class="ai">🎉</div><div><strong>Nenhuma dívida parcelada em aberto!</strong><p>Excelente! Todo o dinheiro disponível pode ir para investimentos e metas.</p></div></div>`;
+    }
+  }
+
+  // 50/30/20
+  const el50=document.getElementById('sug-5030'),bar50=document.getElementById('sug-5030-bar');
+  if(el50){
+    if(renda>0){
+      const lazerG=ST.lazer.gastos.filter(g=>g.mk===mesKey(CUR_MES)).reduce((s,g)=>s+g.v,0);
+      const invMes=ST.inv.byMes&&ST.inv.byMes[mesKey(CUR_MES)]||0;
+      const cats=[
+        {n:'50% — Necessidades',v:renda*.5,desc:'Moradia, alimentação, saúde, transporte, contas fixas',c:'#4f9fff',icon:'🏠',real:contasMeu},
+        {n:'30% — Desejos',v:renda*.3,desc:'Lazer, restaurantes, assinaturas, compras, viagens',c:'#ff6b9d',icon:'🎉',real:lazerG},
+        {n:'20% — Investimentos',v:renda*.2,desc:'Reserva de emergência, aposentadoria, metas financeiras',c:'#1ed760',icon:'📈',real:invMes},
+      ];
+      el50.innerHTML=cats.map(c=>{
+        const pr=PCT(c.real,c.v);
+        return `<div style="padding:12px;background:var(--s2);border-radius:10px;border:1px solid var(--bdr);margin-bottom:8px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="font-size:22px">${c.icon}</span><div style="flex:1"><div style="font-size:13px;font-weight:700">${c.n}</div><div style="font-size:11px;color:var(--mu);margin-top:1px">${c.desc}</div></div><div style="text-align:right"><div style="font-family:var(--fh);font-weight:800;font-size:15px;color:${c.c}">${BRL(c.v)}</div><div style="font-size:10px;color:var(--mu)">ideal/mês</div></div></div>${c.real>0?`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--mu);margin-bottom:4px"><span>Real este mês: <strong style="color:var(--tx)">${BRL(c.real)}</strong></span><span style="color:${pr<=100?c.c:'var(--red)'}">${pr<=100?'✅':'🔴'} ${pr}%</span></div><div class="pt" style="height:5px;background:var(--s3)"><div style="height:100%;width:${Math.min(100,pr)}%;background:${pr<=100?c.c:'var(--red)'};border-radius:4px"></div></div>`:`<div style="font-size:11px;color:var(--mu)">Meta: <strong style="color:${c.c}">${BRL(c.v)}</strong>/mês</div>`}</div>`;
+      }).join('');
+      if(bar50)bar50.innerHTML=`<div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mu);margin-bottom:8px">Distribuição visual da renda</div><div style="display:flex;height:20px;border-radius:10px;overflow:hidden;gap:2px"><div style="flex:50;background:#4f9fff;opacity:.8;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff">50%</div><div style="flex:30;background:#ff6b9d;opacity:.8;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff">30%</div><div style="flex:20;background:#1ed760;opacity:.8;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff">20%</div></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--mu);margin-top:5px"><span style="color:#4f9fff">${BRL(renda*.5)}</span><span style="color:#ff6b9d">${BRL(renda*.3)}</span><span style="color:#1ed760">${BRL(renda*.2)}</span></div>`;
+    } else {
+      el50.innerHTML=`<div style="font-size:12px;color:var(--mu)">Informe sua renda total na calculadora acima para ver a distribuição 50/30/20 personalizada.</div>`;
+      if(bar50)bar50.innerHTML='';
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BACKUP / RESTORE
+// ═══════════════════════════════════════════════════════════════
+let _bkImportData = null;
+
+function renderBackup(){
+  const ls=document.getElementById('bk-last-save');
+  if(ls){ const t=ST._savedAt?new Date(ST._savedAt).toLocaleString('pt-BR'):'—'; ls.textContent='Último save: '+t; }
+  const sum=document.getElementById('bk-summary');
+  if(sum){
+    const nContas=ST.contas?.length||0;
+    const nGanhos=Object.values(ST.meses||{}).reduce((s,m)=>s+(m.ganhos?.length||0),0);
+    const nMeses=Object.keys(ST.meses||{}).filter(k=>Object.keys(ST.meses[k].pagamentos||{}).length>0||ST.meses[k].ganhos?.length>0).length;
+    sum.innerHTML=`<div class="kpi g"><div class="kl">Contas</div><div class="kv">${nContas}</div><div class="ks">cadastradas</div></div><div class="kpi b"><div class="kl">Ganhos</div><div class="kv">${nGanhos}</div><div class="ks">registrados</div></div><div class="kpi gd"><div class="kl">Meses</div><div class="kv">${nMeses}</div><div class="ks">com dados</div></div>`;
+  }
+}
+
+function exportarDados(){
+  const now=new Date();
+  const stamp=now.toISOString().slice(0,10);
+  const nome=`backup_financas_${stamp}.json`;
+  const payload=JSON.stringify({_version:2,_exported:now.toISOString(),_sk:SK,data:ST},null,2);
+  const blob=new Blob([payload],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=nome;document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  const ok=document.getElementById('bk-export-ok');if(ok)ok.style.display='flex';
+  const on=document.getElementById('bk-export-nome');if(on)on.textContent=nome+' · '+(payload.length/1024).toFixed(1)+' KB';
+  toast('📥 Backup: '+nome,'g');
+}
+
+function bkDrop(e){
+  e.preventDefault();
+  const dz=document.getElementById('bk-drop-zone');if(dz)dz.style.borderColor='';
+  const file=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];
+  if(file)processarArquivoBK(file);
+}
+
+function importarDados(input){
+  const file=input&&input.files&&input.files[0];
+  if(file)processarArquivoBK(file);
+}
+
+function processarArquivoBK(file){
+  const err=document.getElementById('bk-import-err');if(err)err.style.display='none';
+  const prev=document.getElementById('bk-import-preview');if(prev)prev.style.display='none';
+  _bkImportData=null;
+  if(!file.name.endsWith('.json')){
+    if(err)err.style.display='flex';
+    const em=document.getElementById('bk-err-msg');if(em)em.textContent='Selecione um arquivo .json gerado por este app.';
+    return;
+  }
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const parsed=JSON.parse(e.target.result);
+      if(!parsed.data||!parsed._version){throw new Error('formato inválido');}
+      _bkImportData=parsed.data;
+      const d=parsed.data;
+      const nContas=d.contas?d.contas.length:0;
+      const nGanhos=Object.values(d.meses||{}).reduce((s,m)=>s+(m.ganhos?m.ganhos.length:0),0);
+      const nMeses=Object.keys(d.meses||{}).length;
+      const exported=parsed._exported?new Date(parsed._exported).toLocaleString('pt-BR'):'—';
+      const pc=document.getElementById('bk-preview-content');
+      if(pc)pc.innerHTML=`<div style="display:flex;gap:8px;font-size:12px;color:var(--mu)"><span style="color:var(--green)">✅</span>Exportado em: <strong style="color:var(--tx)">${exported}</strong></div><div style="display:flex;gap:8px;font-size:12px;color:var(--mu)"><span style="color:var(--blue)">📋</span>${nContas} contas · ${nGanhos} ganhos · ${nMeses} meses de dados</div><div style="display:flex;gap:8px;font-size:12px;color:var(--mu)"><span style="color:var(--gold)">📈</span>Investimentos: ${BRL(d.inv?d.inv.atual||0:0)} · Viagem: ${BRL(d.viagem?d.viagem.meta||0:0)}</div>`;
+      if(prev)prev.style.display='block';
+    }catch(er){
+      if(err)err.style.display='flex';
+      const em=document.getElementById('bk-err-msg');if(em)em.textContent='Arquivo inválido: '+er.message;
+    }
+  };
+  reader.readAsText(file);
+}
+
+function confirmarImport(){
+  if(!_bkImportData)return;
+  localStorage.setItem(SK,JSON.stringify(_bkImportData));
+  const prev=document.getElementById('bk-import-preview');if(prev)prev.style.display='none';
+  const ok=document.getElementById('bk-import-ok');if(ok)ok.style.display='flex';
+  toast('✅ Dados restaurados! Recarregando…','g');
+  setTimeout(function(){location.reload();},1800);
+}
+
+function cancelarImport(){
+  _bkImportData=null;
+  const prev=document.getElementById('bk-import-preview');if(prev)prev.style.display='none';
+  const fi=document.getElementById('bk-file');if(fi)fi.value='';
+}
+
+function confirmarReset(){
+  localStorage.removeItem(SK);
+  toast('🗑️ Dados apagados. Recarregando…','r');
+  setTimeout(function(){location.reload();},1500);
+}
+
+// Click no drop zone abre o file picker
+(function(){
+  const dz=document.getElementById('bk-drop-zone');
+  const fi=document.getElementById('bk-file');
+  if(dz&&fi) dz.addEventListener('click',function(){fi.click();});
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER ALL
+// ═══════════════════════════════════════════════════════════════
+function renderAll(){
+  renderInicio();
+  renderGanhos();
+  renderContas();
+  renderInv();
+  renderViagem();
+  renderLazer();
+  renderSugestoes();
+  renderBackup();
+}
+</script>
+</body>
+</html>
