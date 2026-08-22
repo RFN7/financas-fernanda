@@ -347,6 +347,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--fb)
       <div class="nt" onclick="go('lazer')"><div class="ni">🎉</div>Lazer</div>
       <div class="nt" onclick="go('sugestoes')"><div class="ni">💡</div>Sugestões</div>
       <div class="nt" onclick="go('backup')"><div class="ni">⚙️</div>Backup</div>
+      <div class="nt" onclick="go('historico')"><div class="ni">🕘</div>Histórico</div>
     </div>
   </nav>
 
@@ -393,6 +394,19 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--fb)
       <div class="sbadge" id="sb-g">💾 Salvo</div>
     </div>
 
+    <!-- Salário fixo (recorrente) -->
+    <div class="card" style="border-color:var(--blue3)">
+      <div class="ctitle">💼 Salário Fixo</div>
+      <div class="val-block">
+        <div class="val-block-label">Valor fixo mensal (R$) — recorrente</div>
+        <div class="val-big">
+          <div class="val-prefix">R$</div>
+          <input class="val-input" id="sal-fixo" type="number" min="0" step="0.01" placeholder="0,00" oninput="saveSalarioFixo()">
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--mu)">Conta automaticamente em todos os meses a partir de agora. Editar aqui não muda meses já passados.</div>
+    </div>
+
     <!-- Add income -->
     <div class="card">
       <div class="ctitle">Registrar recebimento</div>
@@ -404,7 +418,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--fb)
         <div class="inp-group">
           <label>Tipo</label>
           <select class="inp" id="gt">
-            <option value="salario">💼 Salário</option>
+            <option value="salario">📊 Salário Variável</option>
             <option value="aluno">👤 Aluno</option>
             <option value="extra">⭐ Extra</option>
             <option value="outro">📦 Outro</option>
@@ -426,7 +440,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--fb)
       </div>
     </div>
 
-    <div class="k2" id="g-kpis"></div>
+    <div class="k3" id="g-kpis"></div>
 
     <!-- Breakdown by type -->
     <div class="card">
@@ -918,6 +932,22 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--fb)
 
   </div>
 
+  <!-- ══ HISTÓRICO ═══════════════════════════════════ -->
+  <div id="pg-historico" class="pg">
+    <div class="ph">
+      <div><div class="ph-title">🕘 Histórico de Alterações</div><div class="ph-sub">Registro local das últimas edições feitas neste dispositivo</div></div>
+    </div>
+
+    <div class="card">
+      <div class="ctitle">Últimas alterações</div>
+      <div id="hist-lista"></div>
+    </div>
+
+    <div style="text-align:center;margin-top:6px;margin-bottom:16px">
+      <button class="btn btn-ghost btn-sm" onclick="limparHistorico()">🗑️ Limpar histórico</button>
+    </div>
+  </div>
+
 </div><!-- /app -->
 
 <div class="toast" id="toast"></div>
@@ -961,6 +991,11 @@ function sv(badge){
     }catch(e){ console.warn('save error',e); }
   }, 300);
 }
+function logEdit(msg){
+  if(!ST.log) ST.log=[];
+  ST.log.unshift({t:new Date().toISOString(), msg});
+  if(ST.log.length>300) ST.log.length=300;
+}
 
 function toast(msg, type=''){
   const el = document.getElementById('toast');
@@ -983,6 +1018,8 @@ if(!ST.inv)      ST.inv      = {atual:0,meta:50000,mensal:500,cats:[],hist:[],by
 if(!ST.viagem)   ST.viagem   = {atual:0,meta:8000,destino:'',date:'',itens:[],hist:[]};
 if(!ST.lazer)    ST.lazer    = {orc:300,gastos:[],byMes:{}};
 if(!ST.parcHist) ST.parcHist = {};
+if(!ST.salario)  ST.salario  = {fixo:0, byMes:{}}; // salário fixo recorrente
+if(!ST.log)      ST.log      = []; // histórico local de edições [{t,msg}]
 if(!ST.contas)   ST.contas   = [
   {id:1, n:'Água',          t:'variavel',  cat:'Casa',       v:120,  p:1,  pg:0},
   {id:2, n:'Luz',           t:'variavel',  cat:'Casa',       v:350,  p:1,  pg:0},
@@ -1010,7 +1047,13 @@ const meuVal   = c => parcVal(c)/2;
 const meuSaldo = c => c.t==='parcelado' ? (c.v/c.p/2)*Math.max(0,c.p-c.pg) : c.v/2;
 const totalMeu = () => ST.contas.reduce((s,c)=>s+meuVal(c),0);
 const ganhosMes       = m => getMes(m).ganhos||[];
-const totalGanhosMes  = m => ganhosMes(m).reduce((s,g)=>s+g.v,0);
+const salarioFixoParaMes = m => {
+  const mk = mesKey(m);
+  if(m < CM) return ST.salario.byMes[mk] ?? 0;   // mês passado: valor congelado (ou 0 se nunca existiu)
+  if(m === CM) ST.salario.byMes[mk] = ST.salario.fixo; // mês atual: congela o valor vigente a cada render
+  return ST.salario.fixo;                         // mês atual ou futuro: valor vigente ao vivo
+};
+const totalGanhosMes  = m => ganhosMes(m).reduce((s,g)=>s+g.v,0) + salarioFixoParaMes(m);
 const pagamentosMes   = m => getMes(m).pagamentos||{};
 const statusPag       = (id,m) => pagamentosMes(m)[id]||'nao';
 const totalPagoMes    = m => ST.contas.filter(c=>statusPag(c.id,m)==='pago'||statusPag(c.id,m)==='quitado'||isQuit(c)).reduce((s,c)=>s+meuVal(c),0);
@@ -1056,6 +1099,7 @@ function initApp(){
   if(ST.viagem.date)    { const el=document.getElementById('v-date');      if(el) el.value=ST.viagem.date; }
   if(ST.viagem.destino) { const el=document.getElementById('v-destino');   if(el) el.value=ST.viagem.destino; }
   if(ST.lazer.orc)      { const el=document.getElementById('l-orc');       if(el) el.value=ST.lazer.orc; }
+  if(ST.salario.fixo)   { const el=document.getElementById('sal-fixo');    if(el) el.value=ST.salario.fixo; }
   ST._lastOpen = new Date().toISOString();
   sv();
   toast('💖 Olá Fernanda! Dados carregados.','g');
@@ -1070,10 +1114,11 @@ function go(pg){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.nt').forEach(t=>t.classList.remove('on'));
   document.getElementById('pg-'+pg).classList.add('on');
-  const idx={inicio:0,ganhos:1,contas:2,investimento:3,viagem:4,lazer:5,sugestoes:6,backup:7};
+  const idx={inicio:0,ganhos:1,contas:2,investimento:3,viagem:4,lazer:5,sugestoes:6,backup:7,historico:8};
   const tabs = document.querySelectorAll('.nt');
   if(tabs[idx[pg]]) tabs[idx[pg]].classList.add('on');
   if(pg==='backup') renderBackup();
+  if(pg==='historico') renderHistorico();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1174,25 +1219,31 @@ function renderGanhos(){
   const lbl = document.getElementById('g-mes-label');
   if(lbl) lbl.textContent=MESES[CUR_MES]+' '+CY;
 
+  const fixoMes=salarioFixoParaMes(CUR_MES);
   const kpis=document.getElementById('g-kpis');
   if(kpis) kpis.innerHTML=`
-    <div class="kpi g"><div class="kl">Total recebido</div><div class="kv">${BRL(total)}</div><div class="ks">${gList.length} registros</div></div>
+    <div class="kpi g"><div class="kl">Total recebido</div><div class="kv">${BRL(total)}</div><div class="ks">${gList.length} registro(s) + fixo</div></div>
+    <div class="kpi b"><div class="kl">💼 Salário Fixo</div><div class="kv">${BRL(fixoMes)}</div><div class="ks">recorrente</div></div>
     <div class="kpi ${total>totalMeu()?'g':'r'}"><div class="kl">Saldo após contas</div><div class="kv">${BRL(total-totalMeu())}</div><div class="ks">ganhos − contas</div></div>`;
 
   // Tipos
-  const tipos={salario:'💼',aluno:'👤',extra:'⭐',outro:'📦'};
+  const tipos={salario:'📊',aluno:'👤',extra:'⭐',outro:'📦'};
   const byTipo={};
   gList.forEach(g=>{ byTipo[g.t]=(byTipo[g.t]||0)+g.v; });
   const gt=document.getElementById('g-tipos');
   if(gt){
-    if(Object.keys(byTipo).length){
-      gt.innerHTML=Object.entries(byTipo).sort((a,b)=>b[1]-a[1]).map(([t,v])=>`
+    const fixoRow=fixoMes>0?`<div class="list-row">
+          <div style="font-size:22px">💼</div>
+          <div class="row-main"><div class="row-title">Salário Fixo</div></div>
+          <div class="row-val pos">${BRL(fixoMes)}</div>
+        </div>`:'';
+    const tiposHtml=Object.entries(byTipo).sort((a,b)=>b[1]-a[1]).map(([t,v])=>`
         <div class="list-row">
           <div style="font-size:22px">${tipos[t]||'📦'}</div>
-          <div class="row-main"><div class="row-title">${{salario:'Salário',aluno:'Alunos',extra:'Extra',outro:'Outros'}[t]||t}</div></div>
+          <div class="row-main"><div class="row-title">${{salario:'Salário Variável',aluno:'Alunos',extra:'Extra',outro:'Outros'}[t]||t}</div></div>
           <div class="row-val pos">${BRL(v)}</div>
         </div>`).join('');
-    } else gt.innerHTML='<div class="empty"><div class="ei">💵</div><p>Nenhum ganho em '+MESES[CUR_MES]+'</p></div>';
+    gt.innerHTML=(fixoRow+tiposHtml)||'<div class="empty"><div class="ei">💵</div><p>Nenhum ganho em '+MESES[CUR_MES]+'</p></div>';
   }
 
   const gl=document.getElementById('g-lista');
@@ -1202,7 +1253,7 @@ function renderGanhos(){
         <div class="list-row">
           <div class="row-main">
             <div class="row-title">${g.n}</div>
-            <div class="row-sub">${g.d||''} · ${{salario:'💼',aluno:'👤',extra:'⭐',outro:'📦'}[g.t]||'📦'} ${g.t}</div>
+            <div class="row-sub">${g.d||''} · ${{salario:'📊',aluno:'👤',extra:'⭐',outro:'📦'}[g.t]||'📦'} ${g.t==='salario'?'Salário Variável':g.t}</div>
           </div>
           <div class="row-val pos">${BRL(g.v)}</div>
           <button class="del-x" onclick="delGanho(${g.id||0})">✕</button>
@@ -1221,13 +1272,22 @@ function addGanho(){
   mes.ganhos.push({id:nGid(CUR_MES),n,v,t,d,mk:mesKey(CUR_MES)});
   document.getElementById('gn').value='';
   document.getElementById('gv').value='';
+  logEdit(`Ganho registrado: ${n} (${BRL(v)})`);
   sv('g'); toast('✅ Ganho registrado!','g'); renderGanhos(); renderInicio(); renderSugestoes();
 }
 
 function delGanho(id){
   const mes=getMes(CUR_MES);
+  const g=mes.ganhos.find(x=>x.id===id);
   mes.ganhos=mes.ganhos.filter(g=>g.id!==id);
+  if(g) logEdit(`Ganho removido: ${g.n} (${BRL(g.v)})`);
   sv('g'); renderGanhos(); renderInicio(); renderSugestoes();
+}
+
+function saveSalarioFixo(){
+  ST.salario.fixo = parseFloat(document.getElementById('sal-fixo').value)||0;
+  logEdit(`Salário fixo atualizado para ${BRL(ST.salario.fixo)}`);
+  sv('g'); renderGanhos(); renderInicio(); renderSugestoes(); buildMonthBar();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1297,9 +1357,9 @@ function renderContas(){
   lista.innerHTML=html;
 }
 
-function saveContaN(id,v){ const c=ST.contas.find(x=>x.id===id); if(c){c.n=v.trim()||c.n; sv('c');} }
-function saveContaV(id,v){ const c=ST.contas.find(x=>x.id===id); if(c&&!isNaN(parseFloat(v))){ c.v=parseFloat(v)*2; sv('c'); renderContas(); renderInicio(); renderSugestoes(); } }
-function delConta(id){ if(!confirm('Remover esta conta?')) return; ST.contas=ST.contas.filter(c=>c.id!==id); sv('c'); renderContas(); renderInicio(); renderSugestoes(); }
+function saveContaN(id,v){ const c=ST.contas.find(x=>x.id===id); if(c){const old=c.n; c.n=v.trim()||c.n; if(c.n!==old) logEdit(`Conta renomeada: "${old}" → "${c.n}"`); sv('c');} }
+function saveContaV(id,v){ const c=ST.contas.find(x=>x.id===id); if(c&&!isNaN(parseFloat(v))){ c.v=parseFloat(v)*2; logEdit(`Conta "${c.n}" — valor atualizado para ${BRL(c.v/2)} (sua parte)`); sv('c'); renderContas(); renderInicio(); renderSugestoes(); } }
+function delConta(id){ if(!confirm('Remover esta conta?')) return; const c=ST.contas.find(x=>x.id===id); ST.contas=ST.contas.filter(c=>c.id!==id); if(c) logEdit(`Conta removida: ${c.n}`); sv('c'); renderContas(); renderInicio(); renderSugestoes(); }
 
 function addConta(){
   const n=document.getElementById('cn').value.trim();
@@ -1309,6 +1369,7 @@ function addConta(){
   if(!n||isNaN(v)||v<0){ toast('Preencha nome e valor','r'); return; }
   ST.contas.push({id:nCid(),n,t,cat:'Outros',v,p,pg:0});
   document.getElementById('cn').value=''; document.getElementById('cv').value=''; document.getElementById('cpa').value='1';
+  logEdit(`Conta adicionada: ${n} (${BRL(v)})`);
   sv('c'); toast('✅ Conta adicionada!','g'); renderContas(); renderInicio(); renderSugestoes();
 }
 
@@ -1324,9 +1385,9 @@ function togglePag(cId){
       if(!ST.parcHist) ST.parcHist={};
       if(!ST.parcHist[cId]) ST.parcHist[cId]=[];
       ST.parcHist[cId].push({mes:mesKey(CUR_MES),parcNum:c.pg,valor:meuVal(c),data:new Date().toLocaleDateString('pt-BR')});
-      if(c.pg>=c.p){ mes.pagamentos[cId]='quitado'; toast('🎉 '+c.n+' QUITADO!','g'); }
-      else { const r=c.p-c.pg; toast('✅ Parcela '+c.pg+'/'+c.p+' de '+c.n+' · faltam '+r+'x = '+BRL(meuVal(c)*r),'g'); }
-    } else { toast('✅ '+c.n+' pago!','g'); }
+      if(c.pg>=c.p){ mes.pagamentos[cId]='quitado'; toast('🎉 '+c.n+' QUITADO!','g'); logEdit(`Conta "${c.n}" quitada (${c.p}ª parcela)`); }
+      else { const r=c.p-c.pg; toast('✅ Parcela '+c.pg+'/'+c.p+' de '+c.n+' · faltam '+r+'x = '+BRL(meuVal(c)*r),'g'); logEdit(`Conta "${c.n}" — parcela ${c.pg}/${c.p} marcada como paga`); }
+    } else { toast('✅ '+c.n+' pago!','g'); logEdit(`Conta "${c.n}" marcada como paga`); }
   } else {
     mes.pagamentos[cId]='nao';
     if(c.t==='parcelado'&&c.pg>0){
@@ -1337,6 +1398,7 @@ function togglePag(cId){
       }
     }
     toast('↩ '+c.n+' desmarcado','');
+    logEdit(`Conta "${c.n}" desmarcada como não paga`);
   }
   sv('c'); renderContas(); renderInicio(); renderSugestoes();
 }
@@ -1402,6 +1464,7 @@ function renderInv(){
 function saveInv(){
   ST.inv.meta   = parseFloat(document.getElementById('inv-meta')?.value)||ST.inv.meta;
   ST.inv.mensal = parseFloat(document.getElementById('inv-mensal')?.value)||ST.inv.mensal;
+  logEdit(`Meta de investimento atualizada: meta ${BRL(ST.inv.meta)}, aporte mensal ${BRL(ST.inv.mensal)}`);
   sv('inv'); renderInv(); renderSugestoes();
 }
 
@@ -1416,6 +1479,7 @@ function aportarInv(){
   ST.inv.hist.push({v,d:new Date().toLocaleDateString('pt-BR'),mk,desc:'Aporte'});
   ST.inv.byMes[mk]=(ST.inv.byMes[mk]||0)+v;
   if(el) el.value='';
+  logEdit(`Aporte de ${BRL(v)} em investimentos`);
   sv('inv'); toast('📈 Aporte de '+BRL(v)+' registrado!','g'); renderInv(); renderInicio(); renderSugestoes();
 }
 
@@ -1427,10 +1491,11 @@ function addInvCat(){
   const ex=ST.inv.cats.find(c=>c.n===n);
   if(ex) ex.v=v; else ST.inv.cats.push({n,v});
   document.getElementById('invc-n').value=''; document.getElementById('invc-v').value='';
+  logEdit(`Categoria de investimento adicionada: ${n} (${BRL(v)})`);
   sv('inv'); renderInv();
 }
 
-function delInvCat(n){ ST.inv.cats=ST.inv.cats.filter(c=>c.n!==n); sv('inv'); renderInv(); }
+function delInvCat(n){ ST.inv.cats=ST.inv.cats.filter(c=>c.n!==n); logEdit(`Categoria de investimento removida: ${n}`); sv('inv'); renderInv(); }
 
 // ═══════════════════════════════════════════════════════════════
 // RENDER: VIAGEM
@@ -1486,6 +1551,7 @@ function saveViagem(){
   ST.viagem.meta    = parseFloat(document.getElementById('v-meta')?.value)||ST.viagem.meta;
   ST.viagem.date    = document.getElementById('v-date')?.value||ST.viagem.date;
   ST.viagem.destino = document.getElementById('v-destino')?.value||ST.viagem.destino;
+  logEdit(`Meta de viagem atualizada: ${ST.viagem.destino||'(sem destino)'} — ${BRL(ST.viagem.meta)}`);
   sv('v'); renderViagem(); renderSugestoes();
 }
 
@@ -1497,6 +1563,7 @@ function aportarViagem(){
   if(!ST.viagem.hist) ST.viagem.hist=[];
   ST.viagem.hist.push({v,d:new Date().toLocaleDateString('pt-BR'),desc:'Depósito'});
   if(el) el.value='';
+  logEdit(`Guardado ${BRL(v)} para viagem`);
   sv('v'); toast('✈️ '+BRL(v)+' guardado para a viagem!','g'); renderViagem(); renderSugestoes();
 }
 
@@ -1507,10 +1574,11 @@ function addVItem(){
   if(!ST.viagem.itens) ST.viagem.itens=[];
   ST.viagem.itens.push({n,v});
   document.getElementById('vi-n').value=''; document.getElementById('vi-v').value='';
+  logEdit(`Item de viagem adicionado: ${n}`);
   sv('v'); renderViagem();
 }
 
-function delVItem(n){ ST.viagem.itens=ST.viagem.itens.filter(i=>i.n!==n); sv('v'); renderViagem(); }
+function delVItem(n){ ST.viagem.itens=ST.viagem.itens.filter(i=>i.n!==n); logEdit(`Item de viagem removido: ${n}`); sv('v'); renderViagem(); }
 
 // ═══════════════════════════════════════════════════════════════
 // RENDER: LAZER
@@ -1558,6 +1626,7 @@ function renderLazer(){
 
 function saveLazer(){
   ST.lazer.orc=parseFloat(document.getElementById('l-orc')?.value)||ST.lazer.orc;
+  logEdit(`Orçamento de lazer atualizado para ${BRL(ST.lazer.orc)}`);
   sv('l'); renderLazer();
 }
 
@@ -1571,6 +1640,7 @@ function addLazer(){
   if(!ST.lazer.byMes) ST.lazer.byMes={};
   ST.lazer.byMes[mesKey(CUR_MES)]=(ST.lazer.byMes[mesKey(CUR_MES)]||0)+v;
   document.getElementById('ln').value=''; document.getElementById('lv').value='';
+  logEdit(`Gasto de lazer registrado: ${n} (${BRL(v)})`);
   sv('l'); toast('🎉 Gasto registrado!','g'); renderLazer();
 }
 
@@ -1578,6 +1648,7 @@ function delLazer(id){
   const g=ST.lazer.gastos.find(x=>x.id===id);
   if(g&&ST.lazer.byMes) ST.lazer.byMes[g.mk]=Math.max(0,(ST.lazer.byMes[g.mk]||0)-g.v);
   ST.lazer.gastos=ST.lazer.gastos.filter(x=>x.id!==id);
+  if(g) logEdit(`Gasto de lazer removido: ${g.n} (${BRL(g.v)})`);
   sv('l'); renderLazer();
 }
 
@@ -1878,6 +1949,30 @@ function confirmarReset(){
 })();
 
 // ═══════════════════════════════════════════════════════════════
+// RENDER: HISTÓRICO
+// ═══════════════════════════════════════════════════════════════
+function renderHistorico(){
+  const el=document.getElementById('hist-lista');
+  if(!el) return;
+  const log=ST.log||[];
+  el.innerHTML=log.length?log.slice(0,150).map(e=>{
+    const d=new Date(e.t);
+    const dstr=isNaN(d)?'—':d.toLocaleDateString('pt-BR')+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    return `<div class="list-row">
+      <div class="row-main">
+        <div class="row-title">${e.msg}</div>
+        <div class="row-sub">${dstr}</div>
+      </div>
+    </div>`;
+  }).join('') : '<div class="empty"><div class="ei">🕘</div><p>Nenhuma edição registrada ainda</p></div>';
+}
+function limparHistorico(){
+  if(!confirm('Apagar todo o histórico de alterações deste dispositivo?')) return;
+  ST.log=[];
+  sv('h'); renderHistorico(); toast('🗑️ Histórico apagado','r');
+}
+
+// ═══════════════════════════════════════════════════════════════
 // RENDER ALL
 // ═══════════════════════════════════════════════════════════════
 function renderAll(){
@@ -1889,6 +1984,7 @@ function renderAll(){
   renderLazer();
   renderSugestoes();
   renderBackup();
+  renderHistorico();
 }
 </script>
 </body>
