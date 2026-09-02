@@ -314,6 +314,13 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--fb)
 .empty{text-align:center;padding:36px 16px;color:var(--mu)}
 .empty .ei{font-size:36px;margin-bottom:10px}
 .empty p{font-size:13px}
+
+.faceid-btn{width:100%;max-width:260px;padding:14px;border:2px solid rgba(255,255,255,.12);border-radius:12px;background:rgba(15,22,34,.8);color:#dde4f0;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s;margin-bottom:10px;}
+.faceid-btn:hover{border-color:#ec4899;}
+.faceid-btn.registered{border-color:rgba(34,197,94,.4);color:#22c55e;}
+.or-div{display:flex;align-items:center;gap:10px;width:100%;max-width:260px;margin:4px 0;}
+.or-div::before,.or-div::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.1);}
+.or-div span{font-size:11px;color:#4a5d80;font-weight:600;}
 </style>
 </head>
 <body>
@@ -330,6 +337,10 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--fb)
     onkeydown="if(event.key==='Enter')doLogin()">
   <button class="lock-btn" onclick="doLogin()">Entrar →</button>
   <div class="lock-err" id="perr"></div>
+  <button id="register-faceid-btn" onclick="registrarFaceId()"
+    style="margin-top:12px;background:none;border:none;color:#4a5d80;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:underline;display:none">
+    ＋ Cadastrar Face ID / Biometria neste dispositivo
+  </button>
 </div>
 
 <!-- ════════ APP ════════ -->
@@ -1890,6 +1901,78 @@ function renderAll(){
   renderSugestoes();
   renderBackup();
 }
+
+// ═══ FACE ID — WebAuthn ═══
+const FID_SK = 'fernanda_faceid_v1';
+
+function b64ToArr(b){return Uint8Array.from(atob(b.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));}
+function arrToB64(a){return btoa(String.fromCharCode(...new Uint8Array(a))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');}
+
+async function initFaceId(){
+  const btn=document.getElementById('faceid-btn');
+  const or=document.getElementById('or-div');
+  const reg=document.getElementById('register-faceid-btn');
+  if(!window.PublicKeyCredential)return;
+  const ok=await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().catch(()=>false);
+  if(!ok)return;
+  const has=!!localStorage.getItem(FID_SK);
+  if(has){btn.style.display='flex';or.style.display='flex';btn.classList.add('registered');}
+  if(reg)reg.style.display=has?'none':'block';
+}
+
+async function registrarFaceId(){
+  const btn=document.getElementById('register-faceid-btn');
+  if(btn){btn.textContent='Aguarde…';btn.disabled=true;}
+  try{
+    const chal=crypto.getRandomValues(new Uint8Array(32));
+    const uid=crypto.getRandomValues(new Uint8Array(16));
+    const cred=await navigator.credentials.create({publicKey:{
+      challenge:chal,
+      rp:{name:'Finanças Fernanda',id:location.hostname},
+      user:{id:uid,name:'fernanda',displayName:'Fernanda 🌸'},
+      pubKeyCredParams:[{alg:-7,type:'public-key'}],
+      authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required'},
+      timeout:60000
+    }});
+    localStorage.setItem(FID_SK,JSON.stringify({id:cred.id,rawId:arrToB64(cred.rawId)}));
+    toast('✅ Face ID cadastrado! Próximo login será automático.','g');
+    setTimeout(initFaceId,400);
+  }catch(e){
+    toast(e.name==='NotAllowedError'?'Cancelado':'Erro: '+e.message,'r');
+    if(btn){btn.textContent='＋ Cadastrar Face ID neste dispositivo';btn.disabled=false;}
+  }
+}
+
+async function loginFaceId(){
+  const credStr=localStorage.getItem(FID_SK);
+  if(!credStr){toast('Cadastre o Face ID primeiro','r');return;}
+  const btn=document.getElementById('faceid-btn');
+  btn.innerHTML='<span style="font-size:22px">👤</span> Verificando…';
+  btn.disabled=true;
+  try{
+    const cred=JSON.parse(credStr);
+    const chal=crypto.getRandomValues(new Uint8Array(32));
+    await navigator.credentials.get({publicKey:{
+      challenge:chal,rpId:location.hostname,
+      allowCredentials:[{type:'public-key',id:b64ToArr(cred.rawId)}],
+      userVerification:'required',timeout:60000
+    }});
+    unlockApp();
+  }catch(e){
+    toast(e.name==='NotAllowedError'?'Face ID cancelado':'Falhou — use o PIN','r');
+    btn.innerHTML='<span style="font-size:22px">👤</span> Entrar com Face ID / Biometria';
+    btn.disabled=false;
+  }
+}
+
+function unlockApp(){
+  document.getElementById('lock').style.display='none';
+  document.getElementById('app').classList.add('show');
+  initApp();
+}
+
+window.addEventListener('load',initFaceId);
+
 </script>
 </body>
 </html>
